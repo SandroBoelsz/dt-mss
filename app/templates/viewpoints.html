@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% block content %}
+
+
+<div class="container">
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th scope="col" class="col-2">Component Name</th>
+                <th scope="col" class="col-3">Role/Purpose</th>
+                <th scope="col" class="col-3">Interfaces</th>
+                <th scope="col" class="col-3">Dependencies</th>
+                <th scope="col" class="col-1"></th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for component in components %}
+            <tr>
+                <td>{{ component.name }}</td>
+                <td>{{ component.role }}</td>
+                <td>{{ component.interfaces }}</td>
+                <td>{{ component.dependencies }}</td>
+                <td class="text-center">
+                    <form method="POST" action="{{ url_for('viewpoints.delete_component', index=loop.index0) }}">
+                        <button type="submit" class="btn btn-danger w-50" title="Delete">
+                            <i class="bi bi-trash"></i>
+                        </button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <form class="row gx-1 mb-3 align-items-center" method="POST" action="{{ url_for('viewpoints.add_component') }}">
+        <div class="col-2">
+            <input type="text" class="form-control" name="name" placeholder="Component Name" required>
+        </div>
+        <div class="col-3">
+            <input type="text" class="form-control" name="role" placeholder="Role/Purpose" required>
+        </div>
+        <div class="col-3">
+            <input type="text" class="form-control" name="interfaces" placeholder="Interfaces" required>
+        </div>
+        <div class="col-3">
+            <input type="text" class="form-control" name="dependencies" placeholder="Dependencies" required>
+        </div>
+        <div class="col-1 d-flex justify-content-center ps-1 pe-2">
+            <button type="submit" class="btn btn-primary w-50" title="Add">
+                <i class="bi bi-plus-lg"></i>
+            </button>
+        </div>
+    </form>
+
+    {% endblock %}

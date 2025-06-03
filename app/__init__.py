@@ -1,5 +1,10 @@
+from app.blueprints import viewpoints, home
 from flask import Flask
 
-app = Flask(__name__)
+def create_app():
+    app = Flask(__name__)
 
-from app import routes
+    app.register_blueprint(home.home_bp)
+    app.register_blueprint(viewpoints.viewpoints_bp)
+
+    return app
