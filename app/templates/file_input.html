@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block title %}{{viewpoint}} artifact upload{% endblock %}
+{% block content %}
+<div class="container d-flex min-vh-100 flex-column justify-content-center align-items-center">
+    <div class="container mt-4">
+        <div class="row align-items-center">
+            <div class="col-lg-6 d-flex flex-column justify-content-center align-items-start border-end">
+                <h2>{{viewpoint}} Viewpoint</h2>
+                <p class="lead">{{description}}
+                    <a href={{url}} target="_blank">here</a>.
+                </p>
+
+                <p class="lead">You can upload a diagram file on the right side of this page. Below, you'll find an
+                    explanation on what formats are supported.
+                    Please ensure your file meets the requirements before uploading.</p>
+                <ul>
+                    <li>Supported formats: PNG, JPG, SVG, PDF</li>
+                    <li>Only one file can be uploaded at a time</li>
+                </ul>
+            </div>
+
+            <div class="col-lg-6 d-flex flex-column justify-content-center align-items-center">
+                <form method="POST" action="{{ url_for('viewpoints.upload_artifact', viewpoint=viewpoint) }}" enctype="multipart/form-data" class="w-100" style="max-width: 400px;" >
+                    <div class="mb-3">
+                        <label for="diagramFile" class="form-label">Select Diagram File</label>
+                        <input class="form-control" type="file" id="diagramFile" name="diagram"
+                            accept=".png,.jpg,.jpeg,.svg,.pdf" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100">Upload</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

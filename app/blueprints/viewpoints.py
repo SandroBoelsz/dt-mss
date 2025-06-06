@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, request, redirect, url_for
+from flask import Blueprint, render_template, request, redirect, url_for, flash
 
 viewpoints_bp = Blueprint('viewpoints', __name__, url_prefix='/viewpoints')
 
@@ -29,9 +29,25 @@ components = [
     }
 ]
 
+description = """
+This viewpoint captures the scientific intent of the DT and identifies candidate
+ reusable components
+ from a domain-specific research perspective using a UML Use Case diagram as its main model.
+ In order for this application to support you during the Science Viewpoint, you need to create and
+ upload a UML Use Case diagram.
+ This Use Diagram should be created based on identified end-users and their use cases.
+ More infomation about a UML Use Case diagram can be found"""
 
-@viewpoints_bp.route('/science')
-def science():
+url = "https://www.geeksforgeeks.org/use-case-diagram/"
+
+
+@viewpoints_bp.route('/science/artifact')
+def scienceArtifact():
+    return render_template('file_input.html', viewpoint="Science", description=description, url=url)
+
+
+@viewpoints_bp.route('/science/analysis')
+def scienceAnalysis():
     return render_template('viewpoints.html', components=components)
 
 
@@ -76,3 +92,12 @@ def delete_component(index):
     if 0 <= index < len(components):
         components.pop(index)
     return redirect(request.referrer)
+
+
+@viewpoints_bp.route('/upload-artifact/<string:viewpoint>', methods=['POST'])
+def upload_artifact(viewpoint):
+    if 'diagram' not in request.files or request.files['diagram'].filename == '' \
+            or viewpoint.lower() not in ['science', 'information', 'computational', 'engineering', 'technology']:
+        return redirect(url_for('home.home'))
+
+    return redirect(url_for(f"viewpoints.{viewpoint.lower()}Analysis"))
