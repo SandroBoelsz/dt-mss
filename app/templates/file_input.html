@@ -25,7 +25,7 @@
                     <div class="mb-3">
                         <label for="diagramFile" class="form-label">Select Diagram File</label>
                         <input class="form-control" type="file" id="diagramFile" name="diagram"
-                            accept=".png,.jpg,.jpeg,.svg,.pdf" required onchange="handleFileSelect(event)">
+                            accept=".png,.jpg,.jpeg,.svg,.pdf" required onchange="handleImageSelect(event)">
                     </div>
                     <button type="submit" class="btn btn-primary w-100">Upload</button>
                 </form>
@@ -36,7 +36,7 @@
 
 <script src="{{ url_for('static', filename='util/local_storage_dao.js') }}"></script>
 <script>
-    function handleFileSelect(event) {
+    function handleImageSelect(event) {
         const file = event.target.files[0];
         if (file) {
             save_image_to_local_storage(file, "{{ viewpoint }}");

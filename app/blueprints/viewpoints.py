@@ -48,7 +48,7 @@ def scienceArtifact():
 
 @viewpoints_bp.route('/science/analysis')
 def scienceAnalysis():
-    return render_template('viewpoints.html', components=components)
+    return render_template('viewpoints.html', viewpoint="Science", components=components)
 
 
 @viewpoints_bp.route('/information')

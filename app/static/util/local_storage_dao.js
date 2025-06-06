@@ -8,17 +8,13 @@ function save_image_to_local_storage(image, viewpoint) {
   console.log(`Image saved for viewpoint: ${viewpoint}`);
 }
 
-function get_image_from_local_storage(viewpoint) {
-  const identifier = viewpoint + "_image";
-  const imageData = localStorage[identifier];
+function get_image_from_local_storage(image) {
+  const imageData = localStorage[image];
+
   if (imageData) {
-    const base64Parts = base64.split(",");
-    const fileFormat = base64Parts[0].split(";")[1];
-    const fileContent = base64Parts[1];
-    const file = new File([fileContent], identifier, {type: fileFormat});
-    return file;
+    return imageData;
   } else {
-    console.warn(`No image found for viewpoint: ${viewpoint}`);
+    console.warn(`No image found for key: ${image}`);
     return null;
   }
 }
