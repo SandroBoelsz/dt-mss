@@ -1,3 +1,0 @@
-# Placeholder for database models
-
-# ...existing code...

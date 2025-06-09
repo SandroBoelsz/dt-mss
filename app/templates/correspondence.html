@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% block title %}{{viewpoint}} Viewpoint Analysis{% endblock %}
+{% block title %}Correspondence{% endblock %}
 
 {% block content %}
 
@@ -50,9 +50,9 @@
         </div>
         <div class="col-lg-5 d-flex flex-column justify-content-between align-items-center d-block">
             <div class="w-100 mb-3">
-                <h2>{{viewpoint}} Viewpoint</h2>
+                <h2>Correspondence</h2>
                 <p class="lead">
-                    {{description}}
+                    test
                 </p>
                 <ul>
                     <li>For each condidate component, describe these aspects:</li>
@@ -77,27 +77,11 @@
     </div>
     <nav class="navbar navbar-light bg-white fixed-bottom m-0">
         <div class="container-fluid justify-content-center text-center">
-            <a href="{{ url_for('viewpoints.scienceAnalysis') }}"
-                class="btn {% if viewpoint == 'Science' %}btn-primary disabled{% else %}btn-outline-primary{% endif %} mx-1">
-                Science
-            </a>
-            <a href="{{ url_for('viewpoints.informationAnalysis') }}"
-                class="btn {% if viewpoint == 'Information' %}btn-primary disabled{% else %}btn-outline-primary{% endif %} mx-1">
-                Information
-            </a>
-            <a href="{{ url_for('viewpoints.computationalAnalysis') }}"
-                class="btn {% if viewpoint == 'Computational' %}btn-primary disabled{% else %}btn-outline-primary{% endif %} mx-1">
-                Computational
-            </a>
-            <a href="{{ url_for('viewpoints.engineeringAnalysis') }}"
-                class="btn {% if viewpoint == 'Engineering' %}btn-primary disabled{% else %}btn-outline-primary{% endif %} mx-1">
-                Engineering
-            </a>
             <a onclick="resetDiagramPreview()" class="btn btn-danger mx-1">
-                Reset Viewpoint Diagram
+                Reset Technology Stack Diagram
             </a>
             <a href="{{ url_for('viewpoints.technologyArtifact') }}" class="btn btn-success mx-1">
-                Finish Viewpoint Analysis
+                Finish Correspondence Phase
             </a>
         </div>
     </nav>
