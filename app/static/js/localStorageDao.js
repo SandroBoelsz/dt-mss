@@ -58,6 +58,19 @@ function save_component_to_local_storage(viewpoint, component) {
   console.log(`Component saved for viewpoint: ${viewpoint}`);
 }
 
+// Save multiple components to the components array in localStorage for a viewpoint
+function save_multiple_components_to_local_storage(viewpoint, components) {
+  let current = get_components_from_local_storage(viewpoint);
+  if (!current) {
+    current = [];
+  }
+  current = current.concat(components);
+
+  const identifier = viewpoint + "_components";
+  localStorage[identifier] = JSON.stringify(current);
+  console.log(`Multiple components saved for viewpoint: ${viewpoint}`);
+}
+
 // Delete a component by index from the components array in localStorage for a viewpoint
 function delete_component_from_local_storage(viewpoint, index) {
   const current = get_components_from_local_storage(viewpoint);

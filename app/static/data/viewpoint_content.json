@@ -19,6 +19,12 @@
     "artifact_url": "https://www.uml-diagrams.org/deployment-diagrams-overview.html",
     "analysis_description": "Potential components should now be extracted from the Deployment Diagram below. Candidate engineering components are identified based on the deployment architecture and interactions defined in the diagram. For example, if a node represents a web application server, a candidate engineering component could be a 'Web Application Service' that handles the user interface."
   },
+  "technology": {
+    "artifact_description": "This viewpoint captures the core technologies such as libraries and platforms used to implement and run the DT, using a Tech Stack Diagram as its main model. In order for this application to support you during the Technology Viewpoint, you need to create and upload a Tech Stack Diagram. This Tech Stack Diagram should be created based on the technologies used in the system, including programming languages, frameworks, and tools. More information about a Tech Stack Diagram can be found.",
+    "artifact_url": "https://www.byteplus.com/en/topic/466151?title=what-is-a-software-stack-diagram",
+    "analysis_description": "Potential components should now be edited, added, or deleted based on the Tech Stack Diagram below. Existing components can be modified to better reflect the technologies used, and new components can be added as needed. For example, if a core runtime library was identified, an existing component could be updated to include the library's functionality and dependencies."
+  },
+
   "correspondence": {
     "artifact_description": "Before we can continue with the correspondence phase, first we need to identify the core technologies used in the DT using the Technology Viewpoint. This viewpoint will be used to cross-check the other viewpoints and captures the core technologies such as libraries and platforms used to implement and run the DT, using a Tech Stack Diagram as its main model. In order for this application to support you during the correspondence phase, you need to create and upload a Tech Stack Diagram. This Tech Stack Diagram should be created based on the technologies used in the system, including programming languages, frameworks, and tools. More information about a Tech Stack Diagram can be found.",
     "artifact_url": "https://www.byteplus.com/en/topic/466151?title=what-is-a-software-stack-diagram",

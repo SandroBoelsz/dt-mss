@@ -76,9 +76,16 @@ def technologyArtifact():
     return render_template('file_input.html', viewpoint="Technology", description=desc, url=url)
 
 
+@viewpoints_bp.route('/technology/analysis')
+def technologyAnalysis():
+    desc = viewpoint_content["technology"]["analysis_description"]
+    url = viewpoint_content["technology"]["artifact_url"]
+
+    return render_template('viewpoints.html', viewpoint="Technology", description=desc, url=url)
+
+
 @viewpoints_bp.route('/correspondence')
 def correspondence():
-    desc = viewpoint_content["correspondence"]["analysis_description"]
     return render_template('correspondence.html')
 
 
@@ -87,8 +94,5 @@ def upload_artifact(viewpoint):
     if 'diagram' not in request.files or request.files['diagram'].filename == '' \
             or viewpoint.lower() not in ['science', 'information', 'computational', 'engineering', 'technology']:
         return redirect(url_for('home.home'))
-
-    if viewpoint.lower() == 'technology':
-        return redirect(url_for('viewpoints.correspondence'))
 
     return redirect(url_for(f"viewpoints.{viewpoint.lower()}Analysis"))

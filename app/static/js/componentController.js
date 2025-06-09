@@ -26,10 +26,47 @@ function handleComponentCreation(event) {
   loadComponentsFromLocalStorage();
 }
 
+// Merge components from all earlier viewpoints and save them under the current viewpoint
+function mergeAndSaveComponents(viewpoint) {
+  let components = [];
+  components = components.concat(
+    get_components_from_local_storage("Science") || []
+  );
+  components = components.concat(
+    get_components_from_local_storage("Information") || []
+  );
+  components = components.concat(
+    get_components_from_local_storage("Computational") || []
+  );
+  components = components.concat(
+    get_components_from_local_storage("Engineering") || []
+  );
+
+  save_multiple_components_to_local_storage(viewpoint, components);
+  return components;
+}
+
 // Load all components for the current viewpoint and render them in the table
 function loadComponentsFromLocalStorage() {
   const viewpoint = window.APP_CONFIG.viewpoint;
-  const components = get_components_from_local_storage(viewpoint) || [];
+
+  let components = [];
+
+  if (
+    viewpoint === "Technology" &&
+    get_components_from_local_storage(viewpoint) === null
+  ) {
+    components = mergeAndSaveComponents(viewpoint);
+  } else if (
+    viewpoint == "Correspondence" &&
+    get_components_from_local_storage(viewpoint) === null
+  ) {
+    components = get_components_from_local_storage("Technology") || [];
+    save_multiple_components_to_local_storage(viewpoint, components);
+  } else {
+    components = get_components_from_local_storage(viewpoint) || [];
+  }
+
   const tableBody = document.getElementById("componentTable");
   if (!tableBody) return;
   tableBody.innerHTML = "";

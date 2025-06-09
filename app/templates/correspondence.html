@@ -69,7 +69,7 @@
                 </ul>
             </div>
             <div class="w-100 d-flex justify-content-center pb-3">
-                <img src="{{ url_for('static', filename='img/no_diagram_placeholder.jpg') }}" alt="No diagram available"
+                <img src="{{ url_for('static', filename='img/correspondence_table.PNG') }}" alt="Correspondence Table"
                     class="img-fluid border rounded h-100 w-100"
                     style="object-fit: contain; min-height: 0; min-width: 0;" id="diagram-preview">
             </div>
@@ -77,11 +77,9 @@
     </div>
     <nav class="navbar navbar-light bg-white fixed-bottom m-0">
         <div class="container-fluid justify-content-center text-center">
-            <a onclick="resetDiagramPreview()" class="btn btn-danger mx-1">
-                Reset Technology Stack Diagram
-            </a>
-            <a href="{{ url_for('viewpoints.technologyArtifact') }}" class="btn btn-success mx-1">
-                Finish Correspondence Phase
+            <a href="{{ url_for('viewpoints.technologyAnalysis') }}" class="btn btn-success mx-1" ,
+                onclick="return confirm('Are you sure? You will not be able to edit this intermediate result or return to this phase. Instead you will proceed to the next phase.');">
+                Go to Placeholder Phase
             </a>
         </div>
     </nav>
@@ -89,43 +87,17 @@
 
 <script>
     window.APP_CONFIG = {
-        viewpoint: "{{ viewpoint }}"
+        viewpoint: "Correspondence",
     };
 </script>
 
-<script src="{{ url_for('static', filename='util/localStorageDao.js') }}"></script>
-<script src="{{ url_for('static', filename='util/componentController.js') }}"></script>
+<script src="{{ url_for('static', filename='js/localStorageDao.js') }}"></script>
+<script src="{{ url_for('static', filename='js/componentController.js') }}"></script>
 
 <script>
-    function updateDiagramPreview() {
-        const image_name = "{{ viewpoint }}_image";
-        const image = get_image_from_local_storage(image_name);
-        if (image) {
-            document.getElementById('diagram-preview').src = image;
-        } else {
-            const artifactUrls = {
-                'Science': "{{ url_for('viewpoints.scienceArtifact') }}",
-                'Information': "{{ url_for('viewpoints.informationArtifact') }}",
-                'Computational': "{{ url_for('viewpoints.computationalArtifact') }}",
-                'Engineering': "{{ url_for('viewpoints.engineeringArtifact') }}",
-                'Technology': "{{ url_for('viewpoints.technologyArtifact') }}"
-            };
-            const artifactUrl = artifactUrls["{{ viewpoint }}"];
-            if (artifactUrl) {
-                window.location.href = artifactUrl;
-            }
-        }
-    }
-
     document.addEventListener('DOMContentLoaded', function () {
-        updateDiagramPreview()
         loadComponentsFromLocalStorage();
     });
-
-    function resetDiagramPreview() {
-        delete_image_from_local_storage("{{ viewpoint}}");
-        updateDiagramPreview();
-    }
 
 </script>
 
