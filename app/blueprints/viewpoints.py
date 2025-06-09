@@ -1,4 +1,6 @@
-from flask import Blueprint, render_template, request, redirect, url_for, flash
+from flask import Blueprint, render_template, request, redirect, url_for
+import json
+from pathlib import Path
 
 viewpoints_bp = Blueprint('viewpoints', __name__, url_prefix='/viewpoints')
 
@@ -29,46 +31,83 @@ components = [
     }
 ]
 
-description = """
-This viewpoint captures the scientific intent of the DT and identifies candidate
- reusable components
- from a domain-specific research perspective using a UML Use Case diagram as its main model.
- In order for this application to support you during the Science Viewpoint, you need to create and
- upload a UML Use Case diagram.
- This Use Diagram should be created based on identified end-users and their use cases.
- More infomation about a UML Use Case diagram can be found"""
-
-url = "https://www.geeksforgeeks.org/use-case-diagram/"
+with open(Path(__file__).parent.parent / "static" / "data" / "viewpoint_content.json", encoding="utf-8") as f:
+    viewpoint_content = json.load(f)
 
 
 @viewpoints_bp.route('/science/artifact')
 def scienceArtifact():
-    return render_template('file_input.html', viewpoint="Science", description=description, url=url)
+    desc = viewpoint_content["science"]["artifact_description"]
+    url = viewpoint_content["science"]["artifact_url"]
+
+    return render_template('file_input.html', viewpoint="Science", description=desc, url=url)
 
 
 @viewpoints_bp.route('/science/analysis')
 def scienceAnalysis():
-    return render_template('viewpoints.html', viewpoint="Science", components=components)
+    desc = viewpoint_content["science"]["analysis_description"]
+
+    return render_template('viewpoints.html', viewpoint="Science", components=components, description=desc)
 
 
-@viewpoints_bp.route('/information')
-def information():
-    return render_template('viewpoints.html', components=components)
+@viewpoints_bp.route('/information/artifact')
+def informationArtifact():
+    desc = viewpoint_content["information"]["artifact_description"]
+    url = viewpoint_content["information"]["artifact_url"]
+
+    return render_template('file_input.html', viewpoint="Information", description=desc, url=url)
 
 
-@viewpoints_bp.route('/computational')
-def computational():
-    return render_template('viewpoints.html', components=components)
+@viewpoints_bp.route('/information/analysis')
+def informationAnalysis():
+    desc = viewpoint_content["information"]["analysis_description"]
+
+    return render_template('viewpoints.html', viewpoint="Information", components=components, description=desc)
 
 
-@viewpoints_bp.route('/engineering')
-def engineering():
-    return render_template('viewpoints.html', components=components)
+@viewpoints_bp.route('/computational/artifact')
+def computationalArtifact():
+    desc = viewpoint_content["computational"]["artifact_description"]
+    url = viewpoint_content["computational"]["artifact_url"]
+
+    return render_template('file_input.html', viewpoint="Computational", description=desc, url=url)
 
 
-@viewpoints_bp.route('/technology')
-def technology():
-    return render_template('viewpoints.html', components=components)
+@viewpoints_bp.route('/computational/analysis')
+def computationalAnalysis():
+    desc = viewpoint_content["computational"]["analysis_description"]
+
+    return render_template('viewpoints.html', viewpoint="Computational", components=components, description=desc)
+
+
+@viewpoints_bp.route('/engineering/artifact')
+def engineeringArtifact():
+    desc = viewpoint_content["engineering"]["artifact_description"]
+    url = viewpoint_content["engineering"]["artifact_url"]
+
+    return render_template('file_input.html', viewpoint="Engineering", description=desc, url=url)
+
+
+@viewpoints_bp.route('/engineering/analysis')
+def engineeringAnalysis():
+    desc = viewpoint_content["engineering"]["analysis_description"]
+
+    return render_template('viewpoints.html', viewpoint="Engineering", components=components, description=desc)
+
+
+@viewpoints_bp.route('/technology/artifact')
+def technologyArtifact():
+    desc = viewpoint_content["technology"]["artifact_description"]
+    url = viewpoint_content["technology"]["artifact_url"]
+
+    return render_template('file_input.html', viewpoint="Technology", description=desc, url=url)
+
+
+@viewpoints_bp.route('/technology/analysis')
+def technologyAnalysis():
+    desc = viewpoint_content["technology"]["analysis_description"]
+
+    return render_template('viewpoints.html', viewpoint="Technology", components=components, description=desc)
 
 
 @viewpoints_bp.route('/add-component', methods=['POST'])

@@ -6,8 +6,8 @@
 <div class="container-fluid">
     <div class="row">
         <div class="col-lg-7">
-            <div class="min-vh-100 d-none d-lg-block">
-                <div style="max-height: 92vh; overflow-y: auto;">
+            <div class="d-lg-block" , style="min-height: 90vh; overflow-x:hidden; overflow-y: auto;">
+                <div style="max-height:90vh; overflow-y: auto;">
                     <table class="table table-striped">
                         <thead>
                             <tr>
@@ -66,7 +66,7 @@
                 </form>
             </div>
             <div class="d-block d-lg-none">
-                <div style="max-height: 92vh; overflow-y: auto;">
+                <div style="overflow-y: auto;">
                     <table class="table table-striped">
                         <thead>
                             <tr>
@@ -113,17 +113,24 @@
                 </form>
             </div>
         </div>
-        <div class="col-lg-5 d-flex flex-column justify-content-between align-items-center">
+        <div class="col-lg-5 d-flex flex-column justify-content-between align-items-center d-block">
             <div class="w-100 mb-3">
-                <h2>Viewpoint</h2>
+                <h2>{{viewpoint}} Viewpoint</h2>
                 <p class="lead">
-                    You can upload a diagram file on the right side of this page. Below, you'll find an
-                    explanation on what formats are supported.
-                    Please ensure your file meets the requirements before uploading.
+                    {{description}}
                 </p>
                 <ul>
-                    <li>Supported formats: PNG, JPG, SVG, PDF</li>
-                    <li>Only one file can be uploaded at a time</li>
+                    <li>For each condidate component, describe these aspects:</li>
+                    <ul>
+                        <li><strong>Name</strong> A unique, descriptive identifier.</li>
+                        <li><strong>Role/Purpose</strong> A short explanation of its functionality.</li>
+                        <li><strong>Interfaces</strong> Inputs/outputs or interaction points.</li>
+                        <li><strong>Dependencies</strong> Required formats, tools, platforms, or runtime
+                            assumptions.</li>
+                    </ul>
+                    </li>
+                    <li>The table on the left can be used to add, edit, or delete potential components.</li>
+                    <li>Stored components will be retrieved in the subsequent phases.</li>
                 </ul>
             </div>
             <div class="w-100 d-flex justify-content-center pb-3">
@@ -133,16 +140,61 @@
             </div>
         </div>
     </div>
+    <nav class="navbar navbar-light bg-white fixed-bottom m-0">
+        <div class="container-fluid justify-content-center text-center">
+            <a href="{{ url_for('viewpoints.scienceAnalysis') }}"
+                class="btn {% if viewpoint == 'Science' %}btn-primary disabled{% else %}btn-outline-primary{% endif %} mx-1">
+                Science
+            </a>
+            <a href="{{ url_for('viewpoints.informationAnalysis') }}"
+                class="btn {% if viewpoint == 'Information' %}btn-primary disabled{% else %}btn-outline-primary{% endif %} mx-1">
+                Information
+            </a>
+            <a href="{{ url_for('viewpoints.computationalAnalysis') }}"
+                class="btn {% if viewpoint == 'Computational' %}btn-primary disabled{% else %}btn-outline-primary{% endif %} mx-1">
+                Computational
+            </a>
+            <a href="{{ url_for('viewpoints.engineeringAnalysis') }}"
+                class="btn {% if viewpoint == 'Engineering' %}btn-primary disabled{% else %}btn-outline-primary{% endif %} mx-1">
+                Engineering
+            </a>
+            <a href="{{ url_for('viewpoints.technologyAnalysis') }}"
+                class="btn {% if viewpoint == 'Technology' %}btn-primary disabled{% else %}btn-outline-primary{% endif %} mx-1">
+                Technology
+            </a>
+        </div>
+    </nav>
 </div>
 
 <script src="{{ url_for('static', filename='util/local_storage_dao.js') }}"></script>
 <script>
     document.addEventListener('DOMContentLoaded', function () {
         const image_name = "{{ viewpoint }}_image";
-        console.log("Image name from server:", image_name);
         const image = get_image_from_local_storage(image_name);
         if (image) {
             document.getElementById('diagram-preview').src = image;
+        } else {
+            let artifactUrl = '';
+            switch ("{{ viewpoint }}") {
+                case 'Science':
+                    artifactUrl = "{{ url_for('viewpoints.scienceArtifact') }}";
+                    break;
+                case 'Information':
+                    artifactUrl = "{{ url_for('viewpoints.informationArtifact') }}";
+                    break;
+                case 'Computational':
+                    artifactUrl = "{{ url_for('viewpoints.computationalArtifact') }}";
+                    break;
+                case 'Engineering':
+                    artifactUrl = "{{ url_for('viewpoints.engineeringArtifact') }}";
+                    break;
+                case 'Technology':
+                    artifactUrl = "{{ url_for('viewpoints.technologyArtifact') }}";
+                    break;
+            }
+            if (artifactUrl) {
+                window.location.href = artifactUrl;
+            }
         }
     });
 </script>

@@ -1,0 +1,27 @@
+{
+  "science": {
+    "artifact_description": "This viewpoint captures the scientific intent of the DT and identifies candidate reusable components from a domain-specific research perspective using a UML Use Case Diagram as its main model. In order for this application to support you during the Science Viewpoint, you need to create and upload a UML Use Case Diagram. This Use Case Diagram should be created based on identified end-users and their use cases. More information about a UML Use Case Diagram can be found.",
+    "artifact_url": "https://www.uml-diagrams.org/use-case-diagrams.html",
+    "analysis_description": "Potential components should now be extracted from the Use Case Diagram below. Candidate components are identified based on the use cases and actors defined in the diagram. For example, if a use case involves user authentication, a candidate science component could be an 'Authentication Service' that handles login and registration processes."
+  },
+  "information": {
+    "artifact_description": "This viewpoint focuses on the data and information flows within the DT, with the goal to identify reusable information components from a data-centric perspective, using a Data Flow Diagram as its main model. In order for this application to support you during the Information Viewpoint, you need to create and upload a Data Flow Diagram. This Data Flow Diagram should be created based on the data input, transformation, and output processes of the system. More information about a Data Flow Diagram can be found.",
+    "artifact_url": "https://www.ibm.com/think/topics/data-flow-diagram",
+    "analysis_description": "Potential components should now be extracted from the Data Flow Diagram below. Candidate information components are identified based on the data flows and processes defined in the diagram. For example, if a data flow involves a model, a candidate information component could be a 'Model file' that is used to process the data."
+  },
+  "computational": {
+    "artifact_description": "This viewpoint focuses on the functional decomposition of the DT into modular, platform-independent components. Using a UML Component Diagram as its main model. In order for this application to support you during the Computational Viewpoint, you need to create and upload a UML Component diagram. This UML Component Diagram should be created based on the system's computational logic and the interfaces between components. More information about a UML Component Diagram can be found.",
+    "artifact_url": "https://www.geeksforgeeks.org/use-case-diagram",
+    "analysis_description": "Potential components should now be extracted from the Component Diagram below. Candidate computational components are identified based on the functional decomposition and interfaces defined in the diagram. For example, if a component handles data processing, a candidate computational component could be a 'Data Processing Module' that implements the necessary algorithms."
+  },
+  "engineering": {
+    "artifact_description": "This viewpoint describes how the identified components are distributed, deployed, and managed within a computational infrastructure, using a UML Deployment Diagram as its main model. In order for this application to support you during the Engineering Viewpoint, you need to create and upload a UML Deployment Diagram. This UML Deployment Diagram should be created based on how services are mapped onto nodes and interact across a shared environment. More information about a UML Deployment Diagram can be found.",
+    "artifact_url": "https://www.uml-diagrams.org/deployment-diagrams-overview.html",
+    "analysis_description": "Potential components should now be extracted from the Deployment Diagram below. Candidate engineering components are identified based on the deployment architecture and interactions defined in the diagram. For example, if a node represents a web application server, a candidate engineering component could be a 'Web Application Service' that handles the user interface."
+  },
+  "technology": {
+    "artifact_description": "This viewpoint captures the core technologies such as libraries and platforms used to implement and run the DT, using a Tech Stack Diagram as its main model. In order for this application to support you during the Technology Viewpoint, you need to create and upload a Tech Stack Diagram. This Tech Stack Diagram should be created based on the technologies used in the system, including programming languages, frameworks, and tools. More information about a Tech Stack Diagram can be found.",
+    "artifact_url": "https://www.byteplus.com/en/topic/466151?title=what-is-a-software-stack-diagram",
+    "analysis_description": "Potential components should now be edited, added, or deleted based on the Tech Stack Diagram below. Existing components can be modified to better reflect the technologies used, and new components can be added as needed. For example, if a core runtime library was identified, an existing component could be updated to include the library's functionality and dependencies."
+  }
+}
