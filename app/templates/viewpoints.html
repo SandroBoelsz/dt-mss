@@ -80,19 +80,19 @@
             {% if viewpoint == 'Technology' %}
             {% else %}
             <a href="{{ url_for('viewpoints.scienceAnalysis') }}"
-                class="btn {% if viewpoint == 'Science' %}btn-primary disabled{% else %}btn-outline-primary{% endif %} mx-1">
+                class="btn {% if viewpoint == 'Science' %}btn-primary{% else %}btn-outline-primary{% endif %} mx-1">
                 Science
             </a>
             <a href="{{ url_for('viewpoints.informationAnalysis') }}"
-                class="btn {% if viewpoint == 'Information' %}btn-primary disabled{% else %}btn-outline-primary{% endif %} mx-1">
+                class="btn {% if viewpoint == 'Information' %}btn-primary{% else %}btn-outline-primary{% endif %} mx-1">
                 Information
             </a>
             <a href="{{ url_for('viewpoints.computationalAnalysis') }}"
-                class="btn {% if viewpoint == 'Computational' %}btn-primary disabled{% else %}btn-outline-primary{% endif %} mx-1">
+                class="btn {% if viewpoint == 'Computational' %}btn-primary{% else %}btn-outline-primary{% endif %} mx-1">
                 Computational
             </a>
             <a href="{{ url_for('viewpoints.engineeringAnalysis') }}"
-                class="btn {% if viewpoint == 'Engineering' %}btn-primary disabled{% else %}btn-outline-primary{% endif %} mx-1">
+                class="btn {% if viewpoint == 'Engineering' %}btn-primary{% else %}btn-outline-primary{% endif %} mx-1">
                 Engineering
             </a>
             {% endif %}

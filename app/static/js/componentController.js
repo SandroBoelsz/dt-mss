@@ -13,13 +13,20 @@ function handleComponentCreation(event) {
     return false;
   }
 
-  // Build the component object and save to localStorage
   const viewpoint = window.APP_CONFIG.viewpoint;
+
+  let isNonCodeComponent = false;
+  if (form.isNonCodeComponent) {
+    isNonCodeComponent = form.isNonCodeComponent.value === "true";
+  }
+  if (viewpoint === "Information") isNonCodeComponent = true;
+
   const component = {
     name: name,
     role: role,
     interfaces: interfaces,
     dependencies: dependencies,
+    isNonCodeComponent: isNonCodeComponent,
   };
   save_component_to_local_storage(viewpoint, component);
   form.reset();
@@ -72,11 +79,30 @@ function loadComponentsFromLocalStorage() {
   tableBody.innerHTML = "";
   components.forEach((component, index) => {
     const row = document.createElement("tr");
-    row.innerHTML = `
+    let rowHtml = `
                 <td>${component.name}</td>
                 <td>${component.role}</td>
                 <td>${component.interfaces}</td>
                 <td>${component.dependencies}</td>
+    `;
+    if (window.APP_CONFIG.viewpoint === "Correspondence") {
+      console.log("Creation:", component.isNonCodeComponent);
+
+      rowHtml += `
+        <td class="text-center">
+          <button type="button" class="btn ${
+            component.isNonCodeComponent ? "btn-outline-primary" : "btn-primary"
+          }" title="codeComponent" onclick="selectCodeComponent(event, ${index})">
+            <i class="bi bi-code"></i>
+          </button>
+          <button type="button" class="btn ${
+            component.isNonCodeComponent ? "btn-primary" : "btn-outline-primary"
+          }" title="nonCodeComponent" onclick="selectNonCodeComponent(event, ${index})">
+            <i class="bi bi-file-earmark-bar-graph"></i>
+          </button>
+        </td>`;
+    }
+    rowHtml += `
                 <td class="text-center">
                     <button type="button" class="btn btn-success" title="Edit" onclick="handleComponentEditing(event, ${index})">
                         <i class="bi bi-pen"></i>
@@ -85,6 +111,7 @@ function loadComponentsFromLocalStorage() {
                         <i class="bi bi-trash"></i>
                     </button>
                 </td>`;
+    row.innerHTML = rowHtml;
     tableBody.appendChild(row);
   });
 }
@@ -97,6 +124,18 @@ function handleComponentDeletion(event, index) {
   loadComponentsFromLocalStorage();
 }
 
+function setComponentType(isNonCode) {
+  document.getElementById("isNonCodeComponent").value = isNonCode
+    ? "true"
+    : "false";
+  document.getElementById("codeComponentBtn").className = isNonCode
+    ? "btn btn-outline-primary"
+    : "btn btn-primary";
+  document.getElementById("nonCodeComponentBtn").className = isNonCode
+    ? "btn btn-primary"
+    : "btn btn-outline-primary";
+}
+
 // Handle editing of a component: populate form with values and remove the old entry
 function handleComponentEditing(event, index) {
   event.preventDefault();
@@ -106,14 +145,19 @@ function handleComponentEditing(event, index) {
     alert("Invalid component index for editing.");
     return;
   }
+
   const component = components[index];
   const form = document.querySelector("form");
+
   form.name.value = component.name;
   form.role.value = component.role;
   form.interfaces.value = component.interfaces;
   form.dependencies.value = component.dependencies;
 
-  // Remove the old component so the edited one will replace it on submit
+  if (viewpoint === "Correspondence") {
+    setComponentType(component.isNonCodeComponent);
+  }
+
   delete_component_from_local_storage(viewpoint, index);
   loadComponentsFromLocalStorage();
 }

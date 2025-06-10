@@ -15,10 +15,12 @@
                                     style="position: sticky; top: 0; background: #fff; z-index: 2;">Component Name</th>
                                 <th scope="col" class="col-2"
                                     style="position: sticky; top: 0; background: #fff; z-index: 2;">Role/Purpose</th>
-                                <th scope="col" class="col-3"
+                                <th scope="col" class="col-2"
                                     style="position: sticky; top: 0; background: #fff; z-index: 2;">Interfaces</th>
-                                <th scope="col" class="col-3"
+                                <th scope="col" class="col-2"
                                     style="position: sticky; top: 0; background: #fff; z-index: 2;">Dependencies</th>
+                                <th scope="col" class="col-2 text-center"
+                                    style="position: sticky; top: 0; background: #fff; z-index: 2;">Component Type</th>
                                 <th scope="col" class="col-2"
                                     style="position: sticky; top: 0; background: #fff; z-index: 2;"></th>
                             </tr>
@@ -34,11 +36,22 @@
                     <div class="col-2">
                         <input type="text" class="form-control" name="role" placeholder="Role/Purpose" required>
                     </div>
-                    <div class="col-3">
+                    <div class="col-2">
                         <input type="text" class="form-control" name="interfaces" placeholder="Interfaces" required>
                     </div>
-                    <div class="col-3">
+                    <div class="col-2">
                         <input type="text" class="form-control" name="dependencies" placeholder="Dependencies" required>
+                    </div>
+                    <div class="col-2 text-center">
+                        <input type="hidden" name="isNonCodeComponent" id="isNonCodeComponent" value="false">
+                        <button type="button" class="btn btn-primary" id="codeComponentBtn" title="Code Component"
+                            onclick="setComponentType(false)">
+                            <i class="bi bi-code"></i>
+                        </button>
+                        <button type="button" class="btn btn-outline-primary" id="nonCodeComponentBtn"
+                            title="Non-Code Component" onclick="setComponentType(true)">
+                            <i class="bi bi-file-earmark-bar-graph"></i>
+                        </button>
                     </div>
                     <div class="col-2 d-flex justify-content-center ps-1 pe-2">
                         <button type="submit" class="btn btn-primary w-50" title="Add">
@@ -98,7 +111,6 @@
     document.addEventListener('DOMContentLoaded', function () {
         loadComponentsFromLocalStorage();
     });
-
 </script>
 
 {% endblock %}
