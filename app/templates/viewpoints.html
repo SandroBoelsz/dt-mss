@@ -3,6 +3,8 @@
 
 {% block content %}
 
+<link rel="stylesheet" href="{{ url_for('static', filename='css/diagram.css') }}">
+
 <div class="container-fluid">
     <div class="row">
         <div class="col-lg-7">
@@ -68,11 +70,12 @@
                     <li>Stored components will be retrieved in the subsequent phases.</li>
                 </ul>
             </div>
-            <div class="d-flex justify-content-center pb-3", style="max-height: 50vh;">
+            <div class="d-flex justify-content-center pb-3" style="max-height: 50vh; overflow-y: auto; width: 100%;">
                 <img src="{{ url_for('static', filename='img/no_diagram_placeholder.jpg') }}" alt="No diagram available"
-                    class="img-fluid border rounded h-100 w-100"
-                    style="object-fit: contain; min-height: 0; min-width: 0;" id="diagram-preview">
+                    class="img-fluid border rounded"
+                    style="object-fit: contain; width: 100%; min-width: 0; min-height: 0;" id="diagram-preview">
             </div>
+
         </div>
     </div>
     <nav class="navbar navbar-light bg-white fixed-bottom m-0">

@@ -1,5 +1,6 @@
-from app.blueprints import viewpoints, home, modularity
+from app.blueprints import viewpoints, home, modularity, decomposition
 from flask import Flask
+
 
 def create_app():
     app = Flask(__name__)
@@ -7,5 +8,6 @@ def create_app():
     app.register_blueprint(home.home_bp)
     app.register_blueprint(viewpoints.viewpoints_bp)
     app.register_blueprint(modularity.modularity_bp)
+    app.register_blueprint(decomposition.decomposition_bp)
 
     return app

@@ -136,34 +136,61 @@ function loadComponentsFromLocalStorage() {
             component.modularity === "monolithic"
               ? "btn-primary"
               : "btn-outline-primary"
-          }" title="monolithic" onclick="selectCodeComponentModularity(event, ${index}, 'monolithic')">
+          }" title="monolithic" onclick="selectComponentModularity(event, ${index}, 'monolithic')">
             <i class="bi bi-boxes"></i>
           </button>
           <button type="button" class="btn ${
             component.modularity === "coarse"
               ? "btn-primary"
               : "btn-outline-primary"
-          }" title="coarse" onclick="selectCodeComponentModularity(event, ${index}, 'coarse')">
+          }" title="coarse" onclick="selectComponentModularity(event, ${index}, 'coarse')">
             <i class="bi bi-diagram-2-fill"></i>
           </button>
           <button type="button" class="btn ${
             component.modularity === "fine"
               ? "btn-primary"
               : "btn-outline-primary"
-          }" title="fine" onclick="selectCodeComponentModularity(event, ${index}, 'fine')">
+          }" title="fine" onclick="selectComponentModularity(event, ${index}, 'fine')">
             <i class="bi bi-diagram-3-fill"></i>
           </button>
         </td>`;
     }
+    if (window.APP_CONFIG.viewpoint === "Non-code") {
+      rowHtml += `
+        <td class="text-center">
+          <button type="button" class="btn ${
+            component.modularity === "base"
+              ? "btn-primary"
+              : "btn-outline-primary"
+          }" title="monolithic" onclick="selectComponentModularity(event, ${index}, 'base')">
+            <i class="bi bi-archive-fill"></i>
+          </button>
+          <button type="button" class="btn ${
+            component.modularity === "external"
+              ? "btn-primary"
+              : "btn-outline-primary"
+          }" title="coarse" onclick="selectComponentModularity(event, ${index}, 'external')">
+            <i class="bi bi-cloudy-fill"></i>
+          </button>
+          <button type="button" class="btn ${
+            component.modularity === "auxiliary"
+              ? "btn-primary"
+              : "btn-outline-primary"
+          }" title="fine" onclick="selectComponentModularity(event, ${index}, 'auxiliary')">
+            <i class="bi bi-folder-fill"></i>
+          </button>
+        </td>`;
+    }
+
     rowHtml += `
-                <td class="text-center">
-                    <button type="button" class="btn btn-success" title="Edit" onclick="handleComponentEditing(event, ${index})">
-                        <i class="bi bi-pen"></i>
-                    </button>
-                    <button type="button" class="btn btn-danger" title="Delete" onclick="handleComponentDeletion(event, ${index})">
-                        <i class="bi bi-trash"></i>
-                    </button>
-                </td>`;
+        <td class="text-center">
+            <button type="button" class="btn btn-success" title="Edit" onclick="handleComponentEditing(event, ${index})">
+                <i class="bi bi-pen"></i>
+            </button>
+            <button type="button" class="btn btn-danger" title="Delete" onclick="handleComponentDeletion(event, ${index})">
+                <i class="bi bi-trash"></i>
+            </button>
+        </td>`;
     row.innerHTML = rowHtml;
     tableBody.appendChild(row);
   });
@@ -191,11 +218,11 @@ function setEditComponentType(isNonCode) {
 
 function setEditModularity(modularity) {
   document.getElementById("monolithicBtn").className =
-    modularity === "monolithic" ? "btn btn-primary" : "btn btn-outline-primary";
+    (modularity === "monolithic" || modularity === "base") ? "btn btn-primary" : "btn btn-outline-primary";
   document.getElementById("coarseBtn").className =
-    modularity === "coarse" ? "btn btn-primary" : "btn btn-outline-primary";
+    (modularity === "coarse" || modularity === "external") ? "btn btn-primary" : "btn btn-outline-primary";
   document.getElementById("fineBtn").className =
-    modularity === "fine" ? "btn btn-primary" : "btn btn-outline-primary";
+    (modularity === "fine" || modularity === "auxiliary") ? "btn btn-primary" : "btn btn-outline-primary";
   document.getElementById("modularityInput").value = modularity;
 }
 
@@ -208,7 +235,7 @@ function selectTableCodeComponentType(event, index, isNonCode) {
   loadComponentsFromLocalStorage();
 }
 
-function selectCodeComponentModularity(event, index, modularity) {
+function selectComponentModularity(event, index, modularity) {
   event.preventDefault();
   viewpoint = window.APP_CONFIG.viewpoint;
   component = get_component_from_local_storage(viewpoint, index);
@@ -237,7 +264,7 @@ function handleComponentEditing(event, index) {
   if (viewpoint === "Correspondence") {
     setEditComponentType(component.isNonCodeComponent);
   }
-  if (viewpoint === "Code") {
+  if (viewpoint === "Code" || viewpoint === "Non-code") {
     setEditModularity(component.modularity);
   }
 

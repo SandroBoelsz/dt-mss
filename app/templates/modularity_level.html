@@ -3,6 +3,8 @@
 
 {% block content %}
 
+<link rel="stylesheet" href="{{ url_for('static', filename='css/diagram.css') }}">
+
 <div class="container-fluid">
     <div class="row">
         <div class="col-lg-7">
@@ -20,7 +22,8 @@
                                 <th scope="col" class="col-2"
                                     style="position: sticky; top: 0; background: #fff; z-index: 2;">Dependencies</th>
                                 <th scope="col" class="col-2 text-center"
-                                    style="position: sticky; top: 0; background: #fff; z-index: 2;">Modularity Level</th>
+                                    style="position: sticky; top: 0; background: #fff; z-index: 2;">Modularity Level
+                                </th>
                                 <th scope="col" class="col-2"
                                     style="position: sticky; top: 0; background: #fff; z-index: 2;"></th>
                             </tr>
@@ -45,6 +48,7 @@
                     <div class="col-2 text-center">
                         <input type="hidden" name="modularity" id="modularityInput" value="">
                         <div id="modularityButtons" style="margin-top: 0.5rem;">
+                            {% if viewpoint == 'Code' %}
                             <button type="button" class="btn btn-outline-primary" id="monolithicBtn" title="Monolithic"
                                 onclick="setEditModularity('monolithic')">
                                 <i class="bi bi-boxes"></i>
@@ -57,6 +61,20 @@
                                 onclick="setEditModularity('fine')">
                                 <i class="bi bi-diagram-3-fill"></i>
                             </button>
+                            {% elif viewpoint == 'Non-code' %}
+                            <button type="button" class="btn btn-outline-primary" id="monolithicBtn" title="Base"
+                                onclick="setEditModularity('base')">
+                                <i class="bi bi-archive-fill"></i>
+                            </button>
+                            <button type="button" class="btn btn-outline-primary" id="coarseBtn" title="External"
+                                onclick="setEditModularity('external')">
+                                <i class="bi bi-cloudy-fill"></i>
+                            </button>
+                            <button type="button" class="btn btn-outline-primary" id="fineBtn" title="Auxiliary"
+                                onclick="setEditModularity('auxiliary')">
+                                <i class="bi bi-folder-fill"></i>
+                            </button>
+                            {% endif %}
                         </div>
                     </div>
                     <div class="col-2 d-flex justify-content-center ps-1 pe-2">
@@ -76,12 +94,26 @@
                 <ul>
                     <li>Review the list of candidate components to the left. For each component:
                         <ul>
-                            <li>Check if it complies with the correspondence rules below. If not, remove it from the
-                                list.
+                            <li>Classify each component by following the flow chart below (zoom in on hover) and
+                                selecting its <strong>Modularity Level</strong> using the buttons provided in the table.
+                                The available modularity levels depend on the current phase:
+                                <ul>
+                                    {% if viewpoint == 'Code' %}
+                                    <li><i class="bi bi-boxes"></i> <strong>Monolithic Container</strong></li>
+                                    <li><i class="bi bi-diagram-2-fill"></i> <strong>Coarse-grained modularity</strong>
+                                    </li>
+                                    <li><i class="bi bi-diagram-3-fill"></i> <strong>Fine-grained modularity</strong>
+                                    </li>
+                                    {% elif viewpoint == 'Non-code' %}
+                                    <li><i class="bi bi-archive-fill"></i> <strong>Include in container or base
+                                            image</strong></li>
+                                    <li><i class="bi bi-cloudy-fill"></i> <strong>External data sources accessable by
+                                            VRE components</strong></li>
+                                    <li><i class="bi bi-folder-fill"></i> <strong>VRE resource or auxiliary
+                                            asset</strong></li>
+                                    {% endif %}
+                                </ul>
                             </li>
-                            <li>Edit the component details if necessary to ensure clarity and consistency.</li>
-                            <li>Classify each component as either a <strong>Code Component</strong> or <strong>Non-Code
-                                    Component</strong> using the buttons provided.</li>
                         </ul>
                     </li>
                     <li>Use the table to add, edit, or delete components as needed.</li>
@@ -89,17 +121,19 @@
                 </ul>
             </div>
             <div class="d-flex justify-content-center pb-3" style="max-height: 60vh; overflow-y: auto; width: 100%;">
-                <img src="{{ url_for('static', filename='img/thesis_modularity_flowchart_code.jpg') }}" alt="Correspondence Table"
-                    class="img-fluid border rounded"
+                <img src="{{ url_for('static', filename='img/thesis_modularity_flowchart_code.jpg') }}"
+                    alt="Correspondence Table" class="img-fluid border rounded"
                     style="object-fit: contain; width: 100%; min-width: 0; min-height: 0;" id="diagram-preview">
             </div>
         </div>
     </div>
     <nav class="navbar navbar-light bg-white fixed-bottom m-0">
         <div class="container-fluid justify-content-center text-center">
-            <a href="{{ url_for('modularity.nonCodeComponents') }}" class="btn btn-success mx-1"
+            <a href="{% if viewpoint == 'Code' %}{{ url_for('modularity.nonCodeComponents') }}{% else %}{{ url_for('decomposition.decomposition') }}{% endif %}"
+                class="btn btn-success mx-1"
                 onclick="if (!all_components_have_modularity()) { alert('Please select a modularity level for all components before proceeding.'); return false; } return confirm('Are you sure? You will not be able to edit this intermediate result or return to this phase. Instead you will proceed to the next phase.');">
-                Go to Non-code Component Modularity Level Phase
+                {% if viewpoint == 'Code' %} Go to Non-code Component Modularity Level Phase {% else %} Go to Component
+                Decomposition Phase {% endif %}
             </a>
         </div>
     </nav>
@@ -119,8 +153,5 @@
         loadComponentsFromLocalStorage();
     });
 </script>
-
-<!-- Add this hidden input inside the form for modularity value -->
-
 
 {% endblock %}
