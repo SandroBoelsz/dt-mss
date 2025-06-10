@@ -80,7 +80,8 @@
                                 list.
                             </li>
                             <li>Edit the component details if necessary to ensure clarity and consistency.</li>
-                            <li>Classify each component as either a <strong>Code Component</strong> or <strong>Non-Code
+                            <li>Classify each component as either a <i class="bi bi-code"></i> <strong>Code
+                                    Component</strong> or <i class="bi bi-file-earmark-bar-graph"></i> <strong>Non-Code
                                     Component</strong> using the buttons provided.</li>
                         </ul>
                     </li>
@@ -88,7 +89,7 @@
                     <li>When finished, proceed to the next phase using the button at the bottom of the page.</li>
                 </ul>
             </div>
-            <div class="d-flex justify-content-center pb-3", style="max-height: 50vh;">
+            <div class="d-flex justify-content-center pb-3" , style="max-height: 50vh;">
                 <img src="{{ url_for('static', filename='img/correspondence_table.PNG') }}" alt="Correspondence Table"
                     class="img-fluid border rounded h-100 w-100"
                     style="object-fit: contain; min-height: 0; min-width: 0;" id="diagram-preview">
@@ -97,7 +98,7 @@
     </div>
     <nav class="navbar navbar-light bg-white fixed-bottom m-0">
         <div class="container-fluid justify-content-center text-center">
-            <a href="{{ url_for('modularity.codeComponents ') }}" class="btn btn-success mx-1" ,
+            <a href="{{ url_for('modularity.codeComponents') }}" class="btn btn-success mx-1" ,
                 onclick="return confirm('Are you sure? You will not be able to edit this intermediate result or return to this phase. Instead you will proceed to the next phase.');">
                 Go to Code Component Modularity Level Phase
             </a>

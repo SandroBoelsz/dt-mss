@@ -19,6 +19,12 @@ function handleComponentCreation(event) {
   if (form.isNonCodeComponent) {
     isNonCodeComponent = form.isNonCodeComponent.value === "true";
   }
+
+  let modularity = null;
+  if (form.modularity) {
+    modularity = form.modularity.value;
+  }
+
   if (viewpoint === "Information") isNonCodeComponent = true;
 
   const component = {
@@ -27,6 +33,7 @@ function handleComponentCreation(event) {
     interfaces: interfaces,
     dependencies: dependencies,
     isNonCodeComponent: isNonCodeComponent,
+    modularity: modularity,
   };
   save_component_to_local_storage(viewpoint, component);
   form.reset();
@@ -78,6 +85,20 @@ function loadComponentsFromLocalStorage() {
   ) {
     components = get_components_from_local_storage("Technology") || [];
     save_multiple_components_to_local_storage(viewpoint, components);
+  } else if (
+    viewpoint == "Code" &&
+    get_components_from_local_storage(viewpoint) === null
+  ) {
+    components = get_components_from_local_storage("Correspondence") || [];
+    components = components.filter((c) => c.isNonCodeComponent === false);
+    save_multiple_components_to_local_storage(viewpoint, components);
+  } else if (
+    viewpoint == "Non-code" &&
+    get_components_from_local_storage(viewpoint) === null
+  ) {
+    components = get_components_from_local_storage("Correspondence") || [];
+    components = components.filter((c) => c.isNonCodeComponent === true);
+    save_multiple_components_to_local_storage(viewpoint, components);
   } else {
     components = get_components_from_local_storage(viewpoint) || [];
   }
@@ -105,6 +126,32 @@ function loadComponentsFromLocalStorage() {
             component.isNonCodeComponent ? "btn-primary" : "btn-outline-primary"
           }" title="nonCodeComponent" onclick="selectTableCodeComponentType(event, ${index}, true)">
             <i class="bi bi-file-earmark-bar-graph"></i>
+          </button>
+        </td>`;
+    }
+    if (window.APP_CONFIG.viewpoint === "Code") {
+      rowHtml += `
+        <td class="text-center">
+          <button type="button" class="btn ${
+            component.modularity === "monolithic"
+              ? "btn-primary"
+              : "btn-outline-primary"
+          }" title="monolithic" onclick="selectCodeComponentModularity(event, ${index}, 'monolithic')">
+            <i class="bi bi-boxes"></i>
+          </button>
+          <button type="button" class="btn ${
+            component.modularity === "coarse"
+              ? "btn-primary"
+              : "btn-outline-primary"
+          }" title="coarse" onclick="selectCodeComponentModularity(event, ${index}, 'coarse')">
+            <i class="bi bi-diagram-2-fill"></i>
+          </button>
+          <button type="button" class="btn ${
+            component.modularity === "fine"
+              ? "btn-primary"
+              : "btn-outline-primary"
+          }" title="fine" onclick="selectCodeComponentModularity(event, ${index}, 'fine')">
+            <i class="bi bi-diagram-3-fill"></i>
           </button>
         </td>`;
     }
@@ -142,13 +189,30 @@ function setEditComponentType(isNonCode) {
     : "btn btn-outline-primary";
 }
 
+function setEditModularity(modularity) {
+  document.getElementById("monolithicBtn").className =
+    modularity === "monolithic" ? "btn btn-primary" : "btn btn-outline-primary";
+  document.getElementById("coarseBtn").className =
+    modularity === "coarse" ? "btn btn-primary" : "btn btn-outline-primary";
+  document.getElementById("fineBtn").className =
+    modularity === "fine" ? "btn btn-primary" : "btn btn-outline-primary";
+  document.getElementById("modularityInput").value = modularity;
+}
+
 function selectTableCodeComponentType(event, index, isNonCode) {
   event.preventDefault();
   viewpoint = window.APP_CONFIG.viewpoint;
-
   component = get_component_from_local_storage(viewpoint, index);
-
   component.isNonCodeComponent = isNonCode;
+  save_component_at_index_to_local_storage(viewpoint, component, index);
+  loadComponentsFromLocalStorage();
+}
+
+function selectCodeComponentModularity(event, index, modularity) {
+  event.preventDefault();
+  viewpoint = window.APP_CONFIG.viewpoint;
+  component = get_component_from_local_storage(viewpoint, index);
+  component.modularity = modularity;
   save_component_at_index_to_local_storage(viewpoint, component, index);
   loadComponentsFromLocalStorage();
 }
@@ -159,7 +223,6 @@ function handleComponentEditing(event, index) {
   const viewpoint = window.APP_CONFIG.viewpoint;
   const components = get_components_from_local_storage(viewpoint) || [];
   if (index < 0 || index >= components.length) {
-    alert("Invalid component index for editing.");
     return;
   }
 
@@ -174,7 +237,16 @@ function handleComponentEditing(event, index) {
   if (viewpoint === "Correspondence") {
     setEditComponentType(component.isNonCodeComponent);
   }
+  if (viewpoint === "Code") {
+    setEditModularity(component.modularity);
+  }
 
   delete_component_from_local_storage(viewpoint, index);
   loadComponentsFromLocalStorage();
+}
+
+function all_components_have_modularity() {
+  const viewpoint = window.APP_CONFIG.viewpoint;
+  const components = get_components_from_local_storage(viewpoint) || [];
+  return components.every((c) => c.modularity);
 }
