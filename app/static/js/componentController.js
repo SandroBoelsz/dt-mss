@@ -36,17 +36,25 @@ function handleComponentCreation(event) {
 // Merge components from all earlier viewpoints and save them under the current viewpoint
 function mergeAndSaveComponents(viewpoint) {
   let components = [];
-  components = components.concat(
-    get_components_from_local_storage("Science") || []
+  function appendViewpointToName(component, vp) {
+    if (!component.name.endsWith(` (${vp})`)) {
+      component.name = `${component.name} (${vp})`;
+    }
+    return component;
+  }
+
+  // Merge and tag each component with its viewpoint
+  (get_components_from_local_storage("Science") || []).forEach((c) =>
+    components.push(appendViewpointToName({ ...c }, "Science"))
   );
-  components = components.concat(
-    get_components_from_local_storage("Information") || []
+  (get_components_from_local_storage("Information") || []).forEach((c) =>
+    components.push(appendViewpointToName({ ...c }, "Information"))
   );
-  components = components.concat(
-    get_components_from_local_storage("Computational") || []
+  (get_components_from_local_storage("Computational") || []).forEach((c) =>
+    components.push(appendViewpointToName({ ...c }, "Computational"))
   );
-  components = components.concat(
-    get_components_from_local_storage("Engineering") || []
+  (get_components_from_local_storage("Engineering") || []).forEach((c) =>
+    components.push(appendViewpointToName({ ...c }, "Engineering"))
   );
 
   save_multiple_components_to_local_storage(viewpoint, components);

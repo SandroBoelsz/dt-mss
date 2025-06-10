@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% block title %}Correspondence{% endblock %}
+{% block title %}{{viewpoint}} Modularity{% endblock %}
 
 {% block content %}
 
@@ -63,15 +63,9 @@
         </div>
         <div class="col-lg-5 d-flex flex-column justify-content-between align-items-center d-block">
             <div class="w-100 mb-3">
-                <h2>Correspondence</h2>
+                <h2>{{viewpoint}} Modularity Level</h2>
                 <p class="lead">
-                    The correspondence phase ensures that components identified in each viewpoint are
-                    semantically aligned and traceable across concerns. Rather than enforcing one-to-one mappings, it
-                    applies a set of standardized correspondence rules that preserve consistency and coherence between
-                    viewpoints. The components that don't comply with these correspondence rules should be removed from
-                    the list. Additionally, the resulting filtered components should be classified as either code or
-                    non-code
-                    components, which is required for the next phase.
+                    {{description}}
                 </p>
                 <ul>
                     <li>Review the list of candidate components to the left. For each component:
@@ -97,7 +91,7 @@
     </div>
     <nav class="navbar navbar-light bg-white fixed-bottom m-0">
         <div class="container-fluid justify-content-center text-center">
-            <a href="{{ url_for('modularity.codeComponents ') }}" class="btn btn-success mx-1" ,
+            <a href="{{ url_for('viewpoints.technologyAnalysis') }}" class="btn btn-success mx-1" ,
                 onclick="return confirm('Are you sure? You will not be able to edit this intermediate result or return to this phase. Instead you will proceed to the next phase.');">
                 Go to Code Component Modularity Level Phase
             </a>
