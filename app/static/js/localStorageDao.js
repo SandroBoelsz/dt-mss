@@ -21,17 +21,6 @@ function get_image_from_local_storage(image) {
   }
 }
 
-// Delete an image from localStorage by its key
-function delete_image_from_local_storage(viewpoint) {
-  const identifier = viewpoint + "_image";
-  if (localStorage[identifier]) {
-    delete localStorage[identifier];
-    console.log(`Image deleted for viewpoint: ${viewpoint}`);
-  } else {
-    console.warn(`No image found for viewpoint: ${viewpoint}`);
-  }
-}
-
 // Retrieve the components array for a viewpoint from localStorage
 function get_components_from_local_storage(viewpoint) {
   const identifier = viewpoint + "_components";
@@ -41,6 +30,16 @@ function get_components_from_local_storage(viewpoint) {
     return JSON.parse(componentData);
   } else {
     console.warn(`No component found for viewpoint: ${viewpoint}`);
+    return null;
+  }
+}
+
+function get_component_from_local_storage(viewpoint, index) {
+  const components = get_components_from_local_storage(viewpoint);
+  if (components && index >= 0 && index < components.length) {
+    return components[index];
+  } else {
+    console.warn(`No component found at index ${index} for viewpoint: ${viewpoint}`);
     return null;
   }
 }
@@ -69,6 +68,34 @@ function save_multiple_components_to_local_storage(viewpoint, components) {
   const identifier = viewpoint + "_components";
   localStorage[identifier] = JSON.stringify(current);
   console.log(`Multiple components saved for viewpoint: ${viewpoint}`);
+}
+
+// Save component at a specific index in the components array in localStorage for a viewpoint
+function save_component_at_index_to_local_storage(viewpoint, component, index) {
+  let current = get_components_from_local_storage(viewpoint);
+  if (!current) {
+    current = [];
+  }
+  if (index < 0 || index >= current.length) {
+    console.warn(`Index ${index} is out of bounds for viewpoint: ${viewpoint}`);
+    return;
+  }
+  current[index] = component;
+
+  const identifier = viewpoint + "_components";
+  localStorage[identifier] = JSON.stringify(current);
+  console.log(`Component at index ${index} saved for viewpoint: ${viewpoint}`);
+}
+
+// Delete an image from localStorage by its key
+function delete_image_from_local_storage(viewpoint) {
+  const identifier = viewpoint + "_image";
+  if (localStorage[identifier]) {
+    delete localStorage[identifier];
+    console.log(`Image deleted for viewpoint: ${viewpoint}`);
+  } else {
+    console.warn(`No image found for viewpoint: ${viewpoint}`);
+  }
 }
 
 // Delete a component by index from the components array in localStorage for a viewpoint

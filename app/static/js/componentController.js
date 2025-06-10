@@ -86,18 +86,16 @@ function loadComponentsFromLocalStorage() {
                 <td>${component.dependencies}</td>
     `;
     if (window.APP_CONFIG.viewpoint === "Correspondence") {
-      console.log("Creation:", component.isNonCodeComponent);
-
       rowHtml += `
         <td class="text-center">
           <button type="button" class="btn ${
             component.isNonCodeComponent ? "btn-outline-primary" : "btn-primary"
-          }" title="codeComponent" onclick="selectCodeComponent(event, ${index})">
+          }" title="codeComponent" onclick="selectTableCodeComponentType(event, ${index}, false)">
             <i class="bi bi-code"></i>
           </button>
           <button type="button" class="btn ${
             component.isNonCodeComponent ? "btn-primary" : "btn-outline-primary"
-          }" title="nonCodeComponent" onclick="selectNonCodeComponent(event, ${index})">
+          }" title="nonCodeComponent" onclick="selectTableCodeComponentType(event, ${index}, true)">
             <i class="bi bi-file-earmark-bar-graph"></i>
           </button>
         </td>`;
@@ -124,7 +122,7 @@ function handleComponentDeletion(event, index) {
   loadComponentsFromLocalStorage();
 }
 
-function setComponentType(isNonCode) {
+function setEditComponentType(isNonCode) {
   document.getElementById("isNonCodeComponent").value = isNonCode
     ? "true"
     : "false";
@@ -134,6 +132,17 @@ function setComponentType(isNonCode) {
   document.getElementById("nonCodeComponentBtn").className = isNonCode
     ? "btn btn-primary"
     : "btn btn-outline-primary";
+}
+
+function selectTableCodeComponentType(event, index, isNonCode) {
+  event.preventDefault();
+  viewpoint = window.APP_CONFIG.viewpoint;
+
+  component = get_component_from_local_storage(viewpoint, index);
+
+  component.isNonCodeComponent = isNonCode;
+  save_component_at_index_to_local_storage(viewpoint, component, index);
+  loadComponentsFromLocalStorage();
 }
 
 // Handle editing of a component: populate form with values and remove the old entry
@@ -155,7 +164,7 @@ function handleComponentEditing(event, index) {
   form.dependencies.value = component.dependencies;
 
   if (viewpoint === "Correspondence") {
-    setComponentType(component.isNonCodeComponent);
+    setEditComponentType(component.isNonCodeComponent);
   }
 
   delete_component_from_local_storage(viewpoint, index);
