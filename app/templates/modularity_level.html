@@ -129,7 +129,7 @@
     </div>
     <nav class="navbar navbar-light bg-white fixed-bottom m-0">
         <div class="container-fluid justify-content-center text-center">
-            <a href="{% if viewpoint == 'Code' %}{{ url_for('modularity.nonCodeComponents') }}{% else %}{{ url_for('decomposition.decomposition') }}{% endif %}"
+            <a href="{% if viewpoint == 'Code' %}{{ url_for('modularity.nonCodeComponents') }}{% else %}{{ url_for('decomposition.monolithicContainer') }}{% endif %}"
                 class="btn btn-success mx-1"
                 onclick="if (!all_components_have_modularity()) { alert('Please select a modularity level for all components before proceeding.'); return false; } return confirm('Are you sure? You will not be able to edit this intermediate result or return to this phase. Instead you will proceed to the next phase.');">
                 {% if viewpoint == 'Code' %} Go to Non-code Component Modularity Level Phase {% else %} Go to Component

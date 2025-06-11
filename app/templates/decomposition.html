@@ -1,0 +1,159 @@
+{% extends "base.html" %}
+{% block title %}{{viewpoint}} Decomposition{% endblock %}
+
+{% block content %}
+
+<link rel="stylesheet" href="{{ url_for('static', filename='css/diagram.css') }}">
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-lg-7">
+            <div class="d-lg-block" , style="min-height: 90vh; overflow-x:hidden; overflow-y: auto;">
+                <div style="max-height:90vh; overflow-y: auto;">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th scope="col" class="col-2"
+                                    style="position: sticky; top: 0; background: #fff; z-index: 2;">Component Name</th>
+                                <th scope="col" class="col-2"
+                                    style="position: sticky; top: 0; background: #fff; z-index: 2;">Role/Purpose</th>
+                                <th scope="col" class="col-3"
+                                    style="position: sticky; top: 0; background: #fff; z-index: 2;">Interfaces</th>
+                                <th scope="col" class="col-3"
+                                    style="position: sticky; top: 0; background: #fff; z-index: 2;">Dependencies</th>
+                                <th scope="col" class="col-2"
+                                    style="position: sticky; top: 0; background: #fff; z-index: 2;"></th>
+                            </tr>
+                        </thead>
+                        <tbody id="componentTable"></tbody>
+                    </table>
+                </div>
+                <form class="row gx-1 mb-3 align-items-center" onsubmit="handleComponentCreation(event)">
+                    <div class="col-2">
+                        <input type="text" class="form-control" name="name" placeholder="Component Name" required>
+                    </div>
+                    <div class="col-2">
+                        <input type="text" class="form-control" name="role" placeholder="Role/Purpose" required>
+                    </div>
+                    <div class="col-3">
+                        <input type="text" class="form-control" name="interfaces" placeholder="Interfaces" required>
+                    </div>
+                    <div class="col-3">
+                        <input type="text" class="form-control" name="dependencies" placeholder="Dependencies" required>
+                    </div>
+                    <div class="col-2 d-flex justify-content-center ps-1 pe-2">
+                        <button type="submit" class="btn btn-primary w-50" title="Add">
+                            <i class="bi bi-plus-lg"></i>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <div class="col-lg-5 d-flex flex-column justify-content-between align-items-center d-block">
+            <div class="w-100 mb-3">
+                <h2>{{viewpoint}} Decomposition</h2>
+
+                {% if viewpoint == 'Monolithic Container' %}
+                <p class="lead">
+                    Components identified as <strong>monolithic containers</strong> are preserved as self-contained
+                    execution units.
+                    In accordance with VRE constraints, these components can be directly containerized.
+                    Each container bundles all internal dependencies, tools, and runtime environments required for
+                    execution.
+                    <br><br>
+                    <strong>Inputs and outputs</strong> are either implicit (such as mounted directories or
+                    environment variables) or
+                    explicitly passed through standardized data mounts or command-line arguments. No internal
+                    restructuring is required at this stage.
+
+                    Please ensure that the following steps are followed to
+                </p>
+                <ul>
+                    <li>
+                        <strong>Decomposition steps for monolithic containers:</strong>
+                        <ol>
+                            <li><strong>Identify entrypoint(s):</strong> Determine the primary executable(s) or
+                                script(s) that initiate the component.</li>
+                            <li><strong>Verify dependencies:</strong> Ensure all required libraries, files, runtime
+                                engines (e.g., R, NetLogo), and system-level packages are included.
+                                Dependencies should be reviewed and extended as needed to guarantee completeness.</li>
+                            <li><strong>Create container image:</strong> Use a Dockerfile or similar tool to define the
+                                container image, specifying the base image, dependencies, and entrypoint.</li>
+                        </ol>
+                    </li>
+                    <li>Use the table to add, edit, or delete components as needed.</li>
+                    <li>When finished, proceed to the next phase using the button at the bottom of the page.</li>
+                </ul>
+                {% elif viewpoint == 'Fine-grained Components' %}
+                <p class="lead">
+                    Fine-grained components are functional units that encapsulate narrowly scoped functionality, each of which may be logically independent or reusable. These components were classified as fine-grained during the methodology phase based on the observation that their logic could be broken down into modular sub-steps. In contrast to coarse-grained components, which are encapsulated as a single VRE unit, fine-grained components require internal decomposition before VRE integration.
+                </p>
+                <ul>
+                    <li>
+                        <strong>Decomposition steps for fine-grained components:</strong>
+                        <ol>
+                            <li><strong>Identify modular sub-steps:</strong> Analyze the component's code or script to detect sequential blocks or function calls that represent distinct sub-processes.</li>
+                            <li><strong>Isolate sub-step logic:</strong> Extract each sub-step's logic into its own self-contained function or script. Ensure that its inputs and outputs are made explicit.</li>
+                            <li><strong>Decompose each sub-step as a coarse-grained component. The resulting components on the left will be taken as input for the next phase.</li>
+                        </ol>
+                    </li>
+                    <li>Use the table to add, edit, or delete the fine-grained components into coarse-grained components.</li>
+                    <li>When finished, proceed to the next phase using the button at the bottom of the page.</li>
+                </ul>
+                {% elif viewpoint == 'Coarse-grained Components' %}
+                <p class="lead">
+                    Coarse-grained components are larger tightly-coupled logical units that expose a well-defined interface. These are suitable for encapsulation into a single VRE problem-solving component, provided their inputs, outputs, and execution dependencies can be determined.
+                    <br><br>
+                    Unlike monolithic containers, coarse-grained components require an explicit definition of their input/output boundaries. The actual logic of the component is usually retained as-is, but the underlying dependencies and input/output are based on VRE constraints.
+                </p>
+                <ul>
+                    <li>
+                        <strong>Decomposition steps for coarse-grained components:</strong>
+                        <ol>
+                            <li><strong>Define functional boundaries:</strong> Identify the core function(s) of the component. Review relevant scripts or source code to verify or extend the interfaces already identified; find out what input data is consumed and what output data is produced.</li>
+                            <li><strong>Extract inputs, outputs and global parameters:</strong> Analyze script arguments, function signatures, or configuration files to map required inputs and expected outputs. Classify these according to VRE constraints. If the component consumes or produces files, these must be passed as strings referencing file paths in persistent or shared storage. Lastly, configurations or constants that can be reused across components can be extracted as global parameters or secrets.</li>
+                            <li><strong>Restructure code (if necessary):</strong> Refactor the component into a standalone script or function with clearly defined input and output parameters. This ensures that it adheres to the VRE's modularity and interface constraints.</li>
+                            <li><strong>Verify dependencies:</strong> Dependencies have been preliminarily gathered during earlier phases. These must now be validated and extended where needed. Any unsupported dependencies in the VRE may require a custom base image, as is done in NaaVRE.</li>
+                        </ol>
+                    </li>
+                    <li>Use the table to add, edit, or delete components as needed.</li>
+                    <li>When finished, proceed to the next phase using the button at the bottom of the page.</li>
+                </ul>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+<nav class="navbar navbar-light bg-white fixed-bottom m-0">
+    <div class="container-fluid justify-content-center text-center">
+        <a href="{% if viewpoint == 'Monolithic Container' %}{{ url_for('decomposition.fineGrained') }}{% elif viewpoint == 'Fine-grained Components' %}{{ url_for('decomposition.coarseGrained') }}{% else %}{{ url_for('decomposition.coarseGrained') }}{% endif %}"
+            class="btn btn-success mx-1"
+            onclick="return confirm('Are you sure? You will not be able to edit this intermediate result or return to this phase. Instead you will proceed to the next phase.');">
+            {% if viewpoint == 'Monolithic Container' %}
+            Go to Fine-Grained Component Decomposition Phase
+            {% elif viewpoint == 'Fine-grained Components' %}
+            Go to Coarse-Grained Component Decomposition Phase
+            {% else %}
+            Go to Metadata Enrichment Phase
+            {% endif %}
+        </a>
+    </div>
+</nav>
+</div>
+
+<script>
+    window.APP_CONFIG = {
+        viewpoint: "{{ viewpoint }}",
+    };
+</script>
+
+<script src="{{ url_for('static', filename='js/localStorageDao.js') }}"></script>
+<script src="{{ url_for('static', filename='js/componentController.js') }}"></script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        loadComponentsFromLocalStorage();
+    });
+</script>
+
+{% endblock %}

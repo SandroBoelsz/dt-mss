@@ -13,7 +13,7 @@ function handleComponentCreation(event) {
     return false;
   }
 
-  const viewpoint = window.APP_CONFIG.viewpoint;
+  const viewpoint = getViewpointFromConfig();
 
   let isNonCodeComponent = false;
   if (form.isNonCodeComponent) {
@@ -25,7 +25,11 @@ function handleComponentCreation(event) {
     modularity = form.modularity.value;
   }
 
-  if (viewpoint === "Information") isNonCodeComponent = true;
+  if (viewpoint === "Information" || viewpoint === "Non-code")
+    isNonCodeComponent = true;
+  if (viewpoint === "Monolithic Container") modularity = "monolithic";
+  if (viewpoint === "Fine-grained Components") modularity = "fine";
+  if (viewpoint === "Coarse-grained Components") modularity = "coarse";
 
   const component = {
     name: name,
@@ -70,7 +74,7 @@ function mergeAndSaveComponents(viewpoint) {
 
 // Load all components for the current viewpoint and render them in the table
 function loadComponentsFromLocalStorage() {
-  const viewpoint = window.APP_CONFIG.viewpoint;
+  const viewpoint = getViewpointFromConfig();
 
   let components = [];
 
@@ -99,8 +103,37 @@ function loadComponentsFromLocalStorage() {
     components = get_components_from_local_storage("Correspondence") || [];
     components = components.filter((c) => c.isNonCodeComponent === true);
     save_multiple_components_to_local_storage(viewpoint, components);
+  } else if (
+    viewpoint == "Monolithic Container" &&
+    get_components_from_local_storage(viewpoint) === null
+  ) {
+    components = get_components_from_local_storage("Code") || [];
+    components = components.filter((c) => c.modularity === "monolithic");
+    save_multiple_components_to_local_storage(viewpoint, components);
+  } else if (
+    viewpoint == "Fine-grained Components" &&
+    get_components_from_local_storage(viewpoint) === null
+  ) {
+    components = get_components_from_local_storage("Code") || [];
+    components = components.filter((c) => c.modularity === "fine");
+    save_multiple_components_to_local_storage(viewpoint, components);
+  } else if (
+    viewpoint == "Coarse-grained Components" &&
+    get_components_from_local_storage(viewpoint) === null
+  ) {
+    components = get_components_from_local_storage("Code") || [];
+    components = components.filter((c) => c.modularity === "coarse");
+    fineGrainedComponents =
+      get_components_from_local_storage("Fine-grained Components") || [];
+    components = components.concat(fineGrainedComponents);
+    components = components.map((c) => {
+      c.modularity = "coarse";
+      return c;
+    });
+
+    save_multiple_components_to_local_storage(viewpoint, components);
   } else {
-    components = get_components_from_local_storage(viewpoint) || [];
+    components = getComponentsForViewpoint(viewpoint);
   }
 
   const tableBody = document.getElementById("componentTable");
@@ -108,90 +141,7 @@ function loadComponentsFromLocalStorage() {
   tableBody.innerHTML = "";
   components.forEach((component, index) => {
     const row = document.createElement("tr");
-    let rowHtml = `
-                <td>${component.name}</td>
-                <td>${component.role}</td>
-                <td>${component.interfaces}</td>
-                <td>${component.dependencies}</td>
-    `;
-    if (window.APP_CONFIG.viewpoint === "Correspondence") {
-      rowHtml += `
-        <td class="text-center">
-          <button type="button" class="btn ${
-            component.isNonCodeComponent ? "btn-outline-primary" : "btn-primary"
-          }" title="codeComponent" onclick="selectTableCodeComponentType(event, ${index}, false)">
-            <i class="bi bi-code"></i>
-          </button>
-          <button type="button" class="btn ${
-            component.isNonCodeComponent ? "btn-primary" : "btn-outline-primary"
-          }" title="nonCodeComponent" onclick="selectTableCodeComponentType(event, ${index}, true)">
-            <i class="bi bi-file-earmark-bar-graph"></i>
-          </button>
-        </td>`;
-    }
-    if (window.APP_CONFIG.viewpoint === "Code") {
-      rowHtml += `
-        <td class="text-center">
-          <button type="button" class="btn ${
-            component.modularity === "monolithic"
-              ? "btn-primary"
-              : "btn-outline-primary"
-          }" title="monolithic" onclick="selectComponentModularity(event, ${index}, 'monolithic')">
-            <i class="bi bi-boxes"></i>
-          </button>
-          <button type="button" class="btn ${
-            component.modularity === "coarse"
-              ? "btn-primary"
-              : "btn-outline-primary"
-          }" title="coarse" onclick="selectComponentModularity(event, ${index}, 'coarse')">
-            <i class="bi bi-diagram-2-fill"></i>
-          </button>
-          <button type="button" class="btn ${
-            component.modularity === "fine"
-              ? "btn-primary"
-              : "btn-outline-primary"
-          }" title="fine" onclick="selectComponentModularity(event, ${index}, 'fine')">
-            <i class="bi bi-diagram-3-fill"></i>
-          </button>
-        </td>`;
-    }
-    if (window.APP_CONFIG.viewpoint === "Non-code") {
-      rowHtml += `
-        <td class="text-center">
-          <button type="button" class="btn ${
-            component.modularity === "base"
-              ? "btn-primary"
-              : "btn-outline-primary"
-          }" title="monolithic" onclick="selectComponentModularity(event, ${index}, 'base')">
-            <i class="bi bi-archive-fill"></i>
-          </button>
-          <button type="button" class="btn ${
-            component.modularity === "external"
-              ? "btn-primary"
-              : "btn-outline-primary"
-          }" title="coarse" onclick="selectComponentModularity(event, ${index}, 'external')">
-            <i class="bi bi-cloudy-fill"></i>
-          </button>
-          <button type="button" class="btn ${
-            component.modularity === "auxiliary"
-              ? "btn-primary"
-              : "btn-outline-primary"
-          }" title="fine" onclick="selectComponentModularity(event, ${index}, 'auxiliary')">
-            <i class="bi bi-folder-fill"></i>
-          </button>
-        </td>`;
-    }
-
-    rowHtml += `
-        <td class="text-center">
-            <button type="button" class="btn btn-success" title="Edit" onclick="handleComponentEditing(event, ${index})">
-                <i class="bi bi-pen"></i>
-            </button>
-            <button type="button" class="btn btn-danger" title="Delete" onclick="handleComponentDeletion(event, ${index})">
-                <i class="bi bi-trash"></i>
-            </button>
-        </td>`;
-    row.innerHTML = rowHtml;
+    row.innerHTML = renderComponentRow(component, index, viewpoint);
     tableBody.appendChild(row);
   });
 }
@@ -218,29 +168,145 @@ function setEditComponentType(isNonCode) {
 
 function setEditModularity(modularity) {
   document.getElementById("monolithicBtn").className =
-    (modularity === "monolithic" || modularity === "base") ? "btn btn-primary" : "btn btn-outline-primary";
+    modularity === "monolithic" || modularity === "base"
+      ? "btn btn-primary"
+      : "btn btn-outline-primary";
   document.getElementById("coarseBtn").className =
-    (modularity === "coarse" || modularity === "external") ? "btn btn-primary" : "btn btn-outline-primary";
+    modularity === "coarse" || modularity === "external"
+      ? "btn btn-primary"
+      : "btn btn-outline-primary";
   document.getElementById("fineBtn").className =
-    (modularity === "fine" || modularity === "auxiliary") ? "btn btn-primary" : "btn btn-outline-primary";
+    modularity === "fine" || modularity === "auxiliary"
+      ? "btn btn-primary"
+      : "btn btn-outline-primary";
   document.getElementById("modularityInput").value = modularity;
 }
 
+function getViewpointFromConfig() {
+  return window.APP_CONFIG.viewpoint;
+}
+
+function getComponentsForViewpoint(viewpoint) {
+  return get_components_from_local_storage(viewpoint) || [];
+}
+
+function setComponentType(component, isNonCode) {
+  component.isNonCodeComponent = isNonCode;
+  return component;
+}
+
+function setComponentModularity(component, modularity) {
+  component.modularity = modularity;
+  return component;
+}
+
+function updateComponentInStorage(viewpoint, component, index) {
+  save_component_at_index_to_local_storage(viewpoint, component, index);
+}
+
+function renderComponentRow(component, index, viewpoint) {
+  let rowHtml = `
+                <td>${component.name}</td>
+                <td>${component.role}</td>
+                <td>${component.interfaces}</td>
+                <td>${component.dependencies}</td>
+    `;
+  if (viewpoint === "Correspondence") {
+    rowHtml += `
+      <td class="text-center">
+        <button type="button" class="btn ${
+          component.isNonCodeComponent ? "btn-outline-primary" : "btn-primary"
+        }" title="codeComponent" onclick="selectTableCodeComponentType(event, ${index}, false)">
+          <i class="bi bi-code"></i>
+        </button>
+        <button type="button" class="btn ${
+          component.isNonCodeComponent ? "btn-primary" : "btn-outline-primary"
+        }" title="nonCodeComponent" onclick="selectTableCodeComponentType(event, ${index}, true)">
+          <i class="bi bi-file-earmark-bar-graph"></i>
+        </button>
+      </td>`;
+  }
+  if (viewpoint === "Code") {
+    rowHtml += `
+      <td class="text-center">
+        <button type="button" class="btn ${
+          component.modularity === "monolithic"
+            ? "btn-primary"
+            : "btn-outline-primary"
+        }" title="monolithic" onclick="selectComponentModularity(event, ${index}, 'monolithic')">
+          <i class="bi bi-boxes"></i>
+        </button>
+        <button type="button" class="btn ${
+          component.modularity === "coarse"
+            ? "btn-primary"
+            : "btn-outline-primary"
+        }" title="coarse" onclick="selectComponentModularity(event, ${index}, 'coarse')">
+          <i class="bi bi-diagram-2-fill"></i>
+        </button>
+        <button type="button" class="btn ${
+          component.modularity === "fine"
+            ? "btn-primary"
+            : "btn-outline-primary"
+        }" title="fine" onclick="selectComponentModularity(event, ${index}, 'fine')">
+          <i class="bi bi-diagram-3-fill"></i>
+        </button>
+      </td>`;
+  }
+  if (viewpoint === "Non-code") {
+    rowHtml += `
+      <td class="text-center">
+        <button type="button" class="btn ${
+          component.modularity === "base"
+            ? "btn-primary"
+            : "btn-outline-primary"
+        }" title="base" onclick="selectComponentModularity(event, ${index}, 'base')">
+          <i class="bi bi-archive-fill"></i>
+        </button>
+        <button type="button" class="btn ${
+          component.modularity === "external"
+            ? "btn-primary"
+            : "btn-outline-primary"
+        }" title="external" onclick="selectComponentModularity(event, ${index}, 'external')">
+          <i class="bi bi-cloudy-fill"></i>
+        </button>
+        <button type="button" class="btn ${
+          component.modularity === "auxiliary"
+            ? "btn-primary"
+            : "btn-outline-primary"
+        }" title="auxiliary" onclick="selectComponentModularity(event, ${index}, 'auxiliary')">
+          <i class="bi bi-folder-fill"></i>
+        </button>
+      </td>`;
+  }
+  rowHtml += `
+      <td class="text-center">
+          <button type="button" class="btn btn-success" title="Edit" onclick="handleComponentEditing(event, ${index})">
+              <i class="bi bi-pen"></i>
+          </button>
+          <button type="button" class="btn btn-danger" title="Delete" onclick="handleComponentDeletion(event, ${index})">
+              <i class="bi bi-trash"></i>
+          </button>
+      </td>`;
+  return rowHtml;
+}
+
+// selectTableCodeComponentType and selectComponentModularity functions remain unchanged
+
 function selectTableCodeComponentType(event, index, isNonCode) {
   event.preventDefault();
-  viewpoint = window.APP_CONFIG.viewpoint;
-  component = get_component_from_local_storage(viewpoint, index);
-  component.isNonCodeComponent = isNonCode;
-  save_component_at_index_to_local_storage(viewpoint, component, index);
+  const viewpoint = getViewpointFromConfig();
+  let component = get_component_from_local_storage(viewpoint, index);
+  component = setComponentType(component, isNonCode);
+  updateComponentInStorage(viewpoint, component, index);
   loadComponentsFromLocalStorage();
 }
 
 function selectComponentModularity(event, index, modularity) {
   event.preventDefault();
-  viewpoint = window.APP_CONFIG.viewpoint;
-  component = get_component_from_local_storage(viewpoint, index);
-  component.modularity = modularity;
-  save_component_at_index_to_local_storage(viewpoint, component, index);
+  const viewpoint = getViewpointFromConfig();
+  let component = get_component_from_local_storage(viewpoint, index);
+  component = setComponentModularity(component, modularity);
+  updateComponentInStorage(viewpoint, component, index);
   loadComponentsFromLocalStorage();
 }
 
