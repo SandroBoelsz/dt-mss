@@ -2,6 +2,33 @@
 {% block title %}Home{% endblock %}
 {% block content %}
 
-<div>Home page</div>
+<div class="container-fluid justify-content-center align-items-center d-flex min-vh-100">
+    <div class="container py-5">
+        <div class="row align-items-center">
+            <div class="col-lg-6 mb-4 mb-lg-0">
+                <h1 class="display-4 fw-bold mb-3">Welcome to the Digital Twin Migration Support System</h1>
+                <p class="lead">This tool guides you through the process of analyzing and decomposing your existing Digital Twin into reusable problem-solving components within a Virtual Research Environment.</p>
+                <ul class="list-group list-group-flush mb-4">
+                    <li class="list-group-item bg-transparent ps-0"><i class="bi bi-diagram-2-fill text-primary me-2"></i>Guided through five phases: Viewpoints Analysis, Correspondence, Modularity Level (Code & Non-code), Component Decomposition, and Metadata Enhancement</li>
+                    <li class="list-group-item bg-transparent ps-0"><i class="bi bi-boxes text-success me-2"></i>Step-by-step decomposition of monolithic, coarse-grained, and fine-grained components</li>
+                    <li class="list-group-item bg-transparent ps-0"><i class="bi bi-table text-warning me-2"></i>Interactive tables to edit and keep track of intermediate results</li>
+                    <li class="list-group-item bg-transparent ps-0"><i class="bi bi-arrow-right-circle text-info me-2"></i>Export your work as a downloadable JSON file containing all component metadata, ready for documentation, sharing, or further integration in your VRE workflow</li>
+                </ul>
+                <a href="{{ url_for('viewpoints.scienceAnalysis') }}" class="btn btn-primary btn-lg px-4">Get
+                    Started</a>
+            </div>
+            <div class="col-lg-6 text-center">
+                <img src="{{ url_for('static', filename='img/digital-twin-banner-foreground.png') }}"
+                    alt="DT image" class="img-fluid"
+                    style="max-height: 800px; object-fit: contain;">
+            </div>
+        </div>
+        <div class="row mt-5">
+            <div class="col text-center">
+                <small class="text-muted">&copy; {{ 2025 }} Digital Twin Migration Support System</small>
+            </div>
+        </div>
+    </div>
+</div>
 
 {% endblock %}
