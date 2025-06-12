@@ -39,7 +39,9 @@ function get_component_from_local_storage(viewpoint, index) {
   if (components && index >= 0 && index < components.length) {
     return components[index];
   } else {
-    console.warn(`No component found at index ${index} for viewpoint: ${viewpoint}`);
+    console.warn(
+      `No component found at index ${index} for viewpoint: ${viewpoint}`
+    );
     return null;
   }
 }
@@ -113,4 +115,9 @@ function delete_component_from_local_storage(viewpoint, index) {
       `No component found at index ${index} for viewpoint: ${viewpoint}`
     );
   }
+}
+
+// Clear all components for a viewpoint in localStorage
+function restartMethodology() {
+  localStorage.clear();
 }

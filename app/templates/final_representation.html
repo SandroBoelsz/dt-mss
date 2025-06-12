@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% block title %}Final Representation{% endblock %}
+{% block content %}
+<div class="container py-5">
+    <h2 class="mb-4 text-center">Final Component Representation</h2>
+    <div class="table-responsive">
+        <table class="table table-bordered align-middle" id="finalComponentTable">
+            <thead class="table-light">
+                <tr>
+                    <th>Id</th>
+                    <th>Name</th>
+                    <th>Description</th>
+                    <th>Type</th>
+                    <th>Modularity</th>
+                    <th>Publisher</th>
+                    <th>License</th>
+                    <th>Version</th>
+                    <th>Publication Date</th>
+                    <th>Input Specification</th>
+                    <th>Output Specification</th>
+                </tr>
+            </thead>
+            <tbody id="finalComponentTableBody">
+            </tbody>
+        </table>
+    </div>
+    <div class="d-flex justify-content-end mt-3">
+        <button class="btn btn-success" onclick="downloadFinalJson()">
+            <i class="bi bi-download"></i> Download JSON
+        </button>
+        <a class="btn btn-danger ms-2" href="{{ url_for('home.home') }}"
+            onclick="if (!confirm('Are you sure you want to restart the methodology? This will erase all progress.')) return false; restartMethodology();">
+            <i class="bi bi-arrow-clockwise"></i> Restart Methodology process
+        </a>
+    </div>
+</div>
+
+<script src="{{ url_for('static', filename='js/localStorageDao.js') }}"></script>
+<script src="{{ url_for('static', filename='js/metadataController.js') }}"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', loadFinalComponentsFromLocalStorage);
+</script>
+{% endblock %}

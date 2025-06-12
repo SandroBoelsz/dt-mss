@@ -122,3 +122,55 @@ function handleMetadataSubmit(event) {
 
   loadComponentsFromLocalStorage(viewpoint);
 }
+
+// Load components from localStorage for the final representation
+function loadFinalComponentsFromLocalStorage() {
+  const components = get_components_from_local_storage("Final Representation");
+
+  const tbody = document.getElementById("finalComponentTableBody");
+  tbody.innerHTML = "";
+  components.forEach((component) => {
+    const tr = document.createElement("tr");
+    tr.innerHTML = `
+            <td>${component.id || ""}</td>
+            <td>${component.name || ""}</td>
+            <td>${component.description || ""}</td>
+            <td>${component.type || ""}</td>
+            <td>${component.modularity || ""}</td>
+            <td>${component.publisher || ""}</td>
+            <td>${component.license || ""}</td>
+            <td>${component.version || ""}</td>
+            <td>${component.publication_date || ""}</td>
+            <td>${(component.inputSpecification || [])
+              .map(
+                (i) =>
+                  `<div><strong>${i.name}</strong> (${i.format}): ${i.description}</div>`
+              )
+              .join("")}</td>
+            <td>${(component.outputSpecification || [])
+              .map(
+                (o) =>
+                  `<div><strong>${o.name}</strong> (${o.format}): ${o.description}</div>`
+              )
+              .join("")}</td>
+        `;
+    tbody.appendChild(tr);
+  });
+}
+
+// Handle the download of the final JSON representation
+function downloadFinalJson() {
+  const viewpoint = "Final Representation";
+  const components = get_components_from_local_storage(viewpoint);
+  const blob = new Blob([JSON.stringify(components, null, 2)], {
+    type: "application/json",
+  });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "final_components_representation.json";
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
