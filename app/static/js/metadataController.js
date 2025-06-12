@@ -123,6 +123,20 @@ function handleMetadataSubmit(event) {
   loadComponentsFromLocalStorage(viewpoint);
 }
 
+// Map modularity values to readable names for display
+function map_modularity_to_readable(modularity) {
+  const modularityMap = {
+    monolithic: "Monolithic Container",
+    coarse: "Coarse-grained Component",
+    fine: "Fine-grained Component",
+    base: "Include in container or base image",
+    external: "External data sources accessable by VRE components",
+    auxiliary: "VRE resource or auxiliary asset",
+  };
+  return modularityMap[modularity] || modularity;
+}
+
+
 // Load components from localStorage for the final representation
 function loadFinalComponentsFromLocalStorage() {
   const components = get_components_from_local_storage("Final Representation");
@@ -136,7 +150,7 @@ function loadFinalComponentsFromLocalStorage() {
             <td>${component.name || ""}</td>
             <td>${component.description || ""}</td>
             <td>${component.type || ""}</td>
-            <td>${component.modularity || ""}</td>
+            <td>${map_modularity_to_readable(component.modularity) || ""}</td>
             <td>${component.publisher || ""}</td>
             <td>${component.license || ""}</td>
             <td>${component.version || ""}</td>
