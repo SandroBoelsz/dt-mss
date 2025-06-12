@@ -1,0 +1,183 @@
+{% extends "base.html" %}
+{% block title %}Metadata Enrichment{% endblock %}
+
+{% block content %}
+
+<link rel="stylesheet" href="{{ url_for('static', filename='css/diagram.css') }}">
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-lg-12 d-flex flex-column justify-content-between align-items-center">
+            <div class="w-100 mb-3">
+                <div class="row">
+                    <div class="col-lg-7">
+                        <div class="d-lg-block" , style="min-height: 45vh; overflow-x:hidden; overflow-y: auto">
+                            <div style="max-height:45vh; overflow-y: auto;">
+                                <table class="table table-striped">
+                                    <thead>
+                                        <tr>
+                                            <th scope="col" class="col-2"
+                                                style="position: sticky; top: 0; background: #fff; z-index: 2;">
+                                                Component Name</th>
+                                            <th scope="col" class="col-2"
+                                                style="position: sticky; top: 0; background: #fff; z-index: 2;">
+                                                Role/Purpose</th>
+                                            <th scope="col" class="col-2"
+                                                style="position: sticky; top: 0; background: #fff; z-index: 2;">
+                                                Interfaces</th>
+                                            <th scope="col" class="col-2"
+                                                style="position: sticky; top: 0; background: #fff; z-index: 2;">
+                                                Dependencies</th>
+                                            <th scope="col" class="col-2"
+                                                style="position: sticky; top: 0; background: #fff; z-index: 2;">
+                                                Modularity</th>
+                                            <th scope="col" class="col-1"
+                                                style="position: sticky; top: 0; background: #fff; z-index: 2;">Type
+                                            </th>
+                                            <th scope="col" class="col-1"
+                                                style="position: sticky; top: 0; background: #fff; z-index: 2;"></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="componentTable"></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-5 d-flex flex-column justify-content-between align-items-center d-block">
+                        <div class="w-100 mb-3">
+                            <h2>Metadata Enrichment</h2>
+                            <p class="lead">
+                                {{description}}
+                            </p>
+                            <ul>
+                                <li>Review the list of candidate components to the left. For each component:
+                                    <ul>
+                                        <li>Classify each component by following the flow chart below (zoom in on hover)
+                                            and
+                                            selecting its <strong>Modularity Level</strong> using the buttons provided
+                                            in the table.
+                                            The available modularity levels depend on the current phase:
+                                        </li>
+                                    </ul>
+                                </li>
+                                <li>Use the table to add, edit, or delete components as needed.</li>
+                                <li>When finished, proceed to the next phase using the button at the bottom of the page.
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="container my-4">
+                <form id="metadataForm" class="row g-3 d-none">
+                    <div class="col-md-8">
+                        <label for="componentName" class="form-label">Name</label>
+                        <input type="text" class="form-control" id="componentName" name="name" required>
+                    </div>
+                    <div class="col-md-4">
+                        <label for="componentId" class="form-label">Id</label>
+                        <input type="text" class="form-control" id="componentId" name="id" placeholder="Auto-generated"
+                            readonly>
+                    </div>
+                    <div class="col-md-8">
+                        <label for="componentDescription" class="form-label">Description</label>
+                        <textarea class="form-control" id="componentDescription" name="description" rows="2"
+                            required></textarea>
+                    </div>
+                    <div class="col-md-4">
+                        <label for="componentType" class="form-label">Type</label>
+                        <input class="form-control" id="componentType" name="componentType" required>
+                    </div>
+
+                    <div class="col-md-4">
+                        <label for="componentModularity" class="form-label">Modularity</label>
+                        <select class="form-select" id="componentModularity" name="modularity" required>
+                            <option value="">Choose...</option>
+                            <option value="monolithic">Monolithic Container</option>
+                            <option value="component">Coarse-grained Component</option>
+                            <option value="fine-grained">Fine-grained Component</option>
+                            <option value="base">Include in container or base image</option>
+                            <option value="external">External data sources accessable by VRE components</option>
+                            <option value="auxiliary">VRE resource or auxiliary asset</option>
+                        </select>
+                    </div>
+                    <div class="col-md-4">
+                        <label for="componentPublisher" class="form-label">Publisher</label>
+                        <input type="text" class="form-control" id="componentPublisher" name="publisher" required>
+                    </div>
+                    <div class="col-md-4">
+                        <label for="componentPubDate" class="form-label">Publication date</label>
+                        <input type="date" class="form-control" id="componentPubDate" name="publication_date" required>
+                    </div>
+                    <div class="col-md-4">
+                        <label for="componentVersion" class="form-label">Version</label>
+                        <input type="text" class="form-control" id="componentVersion" name="version" required>
+                    </div>
+                    <div class="col-md-4">
+                        <label for="componentLicense" class="form-label">License</label>
+                        <input type="text" class="form-control" id="componentLicense" name="license">
+                    </div>
+                    <div class="col-md-8" id="codeComponentFields">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <label class="form-label">Input Specifications</label>
+                                <div id="inputSpecsList"></div>
+                                <button type="button" class="btn btn-outline-primary btn-sm mt-2"
+                                    onclick="addInputSpec()">Add Input Specification</button>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Output Specifications</label>
+                                <div id="outputSpecsList"></div>
+                                <button type="button" class="btn btn-outline-primary btn-sm mt-2"
+                                    onclick="addOutputSpec()">Add Output Specification</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12 d-flex justify-content-end">
+                        <button type="submit" class="btn btn-primary" onclick=handleMetadataSubmit(event)>Save Metadata</button>
+                    </div>
+                </form>
+            </div>
+
+            <nav id="bottomNav" class="navbar navbar-light bg-white fixed-bottom m-0">
+                <div class="container-fluid justify-content-center text-center">
+                    <a href="{% if viewpoint == 'Code' %}{{ url_for('modularity.nonCodeComponents') }}{% else %}{{ url_for('decomposition.monolithicContainer') }}{% endif %}"
+                        class="btn btn-success mx-1"
+                        onclick="if (!all_components_have_modularity()) { alert('Please select a modularity level for all components before proceeding.'); return false; } return confirm('Are you sure? You will not be able to edit this intermediate result or return to this phase. Instead you will proceed to the next phase.');">
+                        {% if viewpoint == 'Code' %} Go to Non-code Component Modularity Level Phase {% else %} Go to
+                        Component
+                        Decomposition Phase {% endif %}
+                    </a>
+                </div>
+            </nav>
+        </div>
+
+        <script>
+            window.APP_CONFIG = {
+                viewpoint: "{{ viewpoint }}",
+            };
+        </script>
+
+        <script src="{{ url_for('static', filename='js/localStorageDao.js') }}"></script>
+        <script src="{{ url_for('static', filename='js/componentController.js') }}"></script>
+        <script src="{{ url_for('static', filename='js/metadataController.js') }}"></script>
+
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                loadComponentsFromLocalStorage();
+
+                const nav = document.getElementById('bottomNav');
+                const form = document.getElementById('metadataForm');
+                const observer = new MutationObserver(function () {
+                    if (form.classList.contains('d-none')) {
+                        nav.classList.add('fixed-bottom');
+                    } else {
+                        nav.classList.remove('fixed-bottom');
+                    }
+                });
+                observer.observe(form, { attributes: true, attributeFilter: ['class'] });
+            });
+        </script>
+
+        {% endblock %}

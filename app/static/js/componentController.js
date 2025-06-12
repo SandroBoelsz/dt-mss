@@ -130,7 +130,19 @@ function loadComponentsFromLocalStorage() {
       c.modularity = "coarse";
       return c;
     });
-
+    save_multiple_components_to_local_storage(viewpoint, components);
+  } else if (
+    viewpoint == "Enrichment" &&
+    get_components_from_local_storage(viewpoint) === null
+  ) {
+    monolithicComponents =
+      get_components_from_local_storage("Monolithic Container") || [];
+    coarseGrained =
+      get_components_from_local_storage("Coarse-grained Components") || [];
+    nonCodeComponents =
+      get_components_from_local_storage("Non-code") || [];
+    components = monolithicComponents.concat(coarseGrained);
+    components = components.concat(nonCodeComponents);
     save_multiple_components_to_local_storage(viewpoint, components);
   } else {
     components = getComponentsForViewpoint(viewpoint);
@@ -202,6 +214,18 @@ function setComponentModularity(component, modularity) {
 
 function updateComponentInStorage(viewpoint, component, index) {
   save_component_at_index_to_local_storage(viewpoint, component, index);
+}
+
+function map_modularity_to_readable_name(modularity) {
+  const modularityMap = {
+    monolithic: "Monolithic Container",
+    coarse: "Coarse-grained Component",
+    fine: "Fine-grained Component",
+    base: "Include in container or base image",
+    external: "External data sources accessable by VRE components",
+    auxiliary: "VRE resource or auxiliary asset",
+  };
+  return modularityMap[modularity] || modularity;
 }
 
 function renderComponentRow(component, index, viewpoint) {
@@ -278,7 +302,15 @@ function renderComponentRow(component, index, viewpoint) {
         </button>
       </td>`;
   }
-  rowHtml += `
+  if (viewpoint === "Enrichment") {
+    rowHtml += `<td>${map_modularity_to_readable_name(
+      component.modularity
+    )}</td>
+    <td>${component.isNonCodeComponent ? "Non-code" : "Code"}</td>`;
+  }
+
+  if (viewpoint !== "Enrichment") {
+    rowHtml += `
       <td class="text-center">
           <button type="button" class="btn btn-success" title="Edit" onclick="handleComponentEditing(event, ${index})">
               <i class="bi bi-pen"></i>
@@ -287,6 +319,14 @@ function renderComponentRow(component, index, viewpoint) {
               <i class="bi bi-trash"></i>
           </button>
       </td>`;
+  } else {
+    rowHtml += `
+      <td class="text-center">
+          <button type="button" class="btn btn-primary" title="Metadata" onclick="handleMetadataCondidate(event, ${index})">
+              <i class="bi bi-card-text"></i>
+          </button>
+      </td>`;
+  }
   return rowHtml;
 }
 

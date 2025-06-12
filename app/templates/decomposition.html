@@ -126,7 +126,7 @@
 </div>
 <nav class="navbar navbar-light bg-white fixed-bottom m-0">
     <div class="container-fluid justify-content-center text-center">
-        <a href="{% if viewpoint == 'Monolithic Container' %}{{ url_for('decomposition.fineGrained') }}{% elif viewpoint == 'Fine-grained Components' %}{{ url_for('decomposition.coarseGrained') }}{% else %}{{ url_for('decomposition.coarseGrained') }}{% endif %}"
+        <a href="{% if viewpoint == 'Monolithic Container' %}{{ url_for('decomposition.fineGrained') }}{% elif viewpoint == 'Fine-grained Components' %}{{ url_for('decomposition.coarseGrained') }}{% else %}{{ url_for('metadata.enrichment') }}{% endif %}"
             class="btn btn-success mx-1"
             onclick="return confirm('Are you sure? You will not be able to edit this intermediate result or return to this phase. Instead you will proceed to the next phase.');">
             {% if viewpoint == 'Monolithic Container' %}
