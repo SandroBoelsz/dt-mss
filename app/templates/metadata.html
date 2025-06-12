@@ -11,8 +11,8 @@
             <div class="w-100 mb-3">
                 <div class="row">
                     <div class="col-lg-7">
-                        <div class="d-lg-block" , style="min-height: 45vh; overflow-x:hidden; overflow-y: auto">
-                            <div style="max-height:45vh; overflow-y: auto;">
+                        <div class="d-lg-block" , style="min-height: 55vh; overflow-x:hidden; overflow-y: auto">
+                            <div style="max-height:55vh; overflow-y: auto;">
                                 <table class="table table-striped">
                                     <thead>
                                         <tr>
@@ -47,30 +47,43 @@
                         <div class="w-100 mb-3">
                             <h2>Metadata Enrichment</h2>
                             <p class="lead">
-                                {{description}}
+                                Now that the components have been decomposed and a list of reusable components has been
+                                identified, it is necessary to add metadata in order to ensure future reuse of these
+                                components.<br><br>
+                                Each reusable component should be annotated with the following metadata fields:
                             </p>
                             <ul>
-                                <li>Review the list of candidate components to the left. For each component:
-                                    <ul>
-                                        <li>Classify each component by following the flow chart below (zoom in on hover)
-                                            and
-                                            selecting its <strong>Modularity Level</strong> using the buttons provided
-                                            in the table.
-                                            The available modularity levels depend on the current phase:
-                                        </li>
-                                    </ul>
-                                </li>
-                                <li>Use the table to add, edit, or delete components as needed.</li>
-                                <li>When finished, proceed to the next phase using the button at the bottom of the page.
-                                </li>
+                                <li><strong>Id</strong> a unique, generated identifier identifying the component.</li>
+                                <li><strong>Name</strong> a human-readable name identifying the component.</li>
+                                <li><strong>Type</strong> categorization as code, data, model, executable,
+                                    documentation, etc.</li>
+                                <li><strong>Description</strong> a short description of the component's functionality or
+                                    purpose within the digital twin.</li>
+                                <li><strong>Modularity</strong> Monolithic container or component.</li>
+                                <li><strong>Publisher</strong> Organizational or personal publisher name.</li>
+                                <li><strong>Publication date</strong> Date of publication.</li>
+                                <li><strong>Version</strong> a version number to ensure integrity and enable version
+                                    tracking.</li>
+                                <li><strong>License</strong> usage rights associated with the component.</li>
+                                <li><strong>(Coarse-grained components only) Input specification</strong> name and
+                                    description of expected input(s) including data formats.</li>
+                                <li><strong>(Coarse-grained components only) Output specification</strong> name and
+                                    description of expected output(s) including data formats.</li>
                             </ul>
+                            <p>
+                                <li>Click on the blue <i class="bi bi-card-text"></i> "Add Metadata" button to open the
+                                    metadata form.</li>
+                                <li>Metadata enriched components will be moved to the final phase.</li>
+                                </ul>
                         </div>
+
                     </div>
                 </div>
             </div>
 
             <div class="container my-4">
                 <form id="metadataForm" class="row g-3 d-none">
+                    <input type="hidden" id="componentIndex" name="componentIndex">
                     <div class="col-md-8">
                         <label for="componentName" class="form-label">Name</label>
                         <input type="text" class="form-control" id="componentName" name="name" required>
@@ -95,8 +108,8 @@
                         <select class="form-select" id="componentModularity" name="modularity" required>
                             <option value="">Choose...</option>
                             <option value="monolithic">Monolithic Container</option>
-                            <option value="component">Coarse-grained Component</option>
-                            <option value="fine-grained">Fine-grained Component</option>
+                            <option value="coarse">Coarse-grained Component</option>
+                            <option value="fine">Fine-grained Component</option>
                             <option value="base">Include in container or base image</option>
                             <option value="external">External data sources accessable by VRE components</option>
                             <option value="auxiliary">VRE resource or auxiliary asset</option>
@@ -112,7 +125,7 @@
                     </div>
                     <div class="col-md-4">
                         <label for="componentVersion" class="form-label">Version</label>
-                        <input type="text" class="form-control" id="componentVersion" name="version" required>
+                        <input type="text" class="form-control" id="componentVersion" name="version">
                     </div>
                     <div class="col-md-4">
                         <label for="componentLicense" class="form-label">License</label>
@@ -135,49 +148,50 @@
                         </div>
                     </div>
                     <div class="col-12 d-flex justify-content-end">
-                        <button type="submit" class="btn btn-primary" onclick=handleMetadataSubmit(event)>Save Metadata</button>
+                        <button type="submit" class="btn btn-primary" onclick=handleMetadataSubmit(event)>Save
+                            Metadata</button>
                     </div>
                 </form>
             </div>
 
             <nav id="bottomNav" class="navbar navbar-light bg-white fixed-bottom m-0">
                 <div class="container-fluid justify-content-center text-center">
-                    <a href="{% if viewpoint == 'Code' %}{{ url_for('modularity.nonCodeComponents') }}{% else %}{{ url_for('decomposition.monolithicContainer') }}{% endif %}"
-                        class="btn btn-success mx-1"
-                        onclick="if (!all_components_have_modularity()) { alert('Please select a modularity level for all components before proceeding.'); return false; } return confirm('Are you sure? You will not be able to edit this intermediate result or return to this phase. Instead you will proceed to the next phase.');">
-                        {% if viewpoint == 'Code' %} Go to Non-code Component Modularity Level Phase {% else %} Go to
-                        Component
-                        Decomposition Phase {% endif %}
+                    <a href="{{ url_for('metadata.finalRepresentation') }}" class="btn btn-success mx-1"
+                        onclick="if (!all_components_have_metadata()) { alert('Please fill in metadata for all components before proceeding.'); return false; }">
+                        Go to Final Representation and Download Phase
                     </a>
                 </div>
             </nav>
         </div>
+    </div>
+</div>
 
-        <script>
-            window.APP_CONFIG = {
-                viewpoint: "{{ viewpoint }}",
-            };
-        </script>
 
-        <script src="{{ url_for('static', filename='js/localStorageDao.js') }}"></script>
-        <script src="{{ url_for('static', filename='js/componentController.js') }}"></script>
-        <script src="{{ url_for('static', filename='js/metadataController.js') }}"></script>
+<script>
+    window.APP_CONFIG = {
+        viewpoint: "{{ viewpoint }}",
+    };
+</script>
 
-        <script>
-            document.addEventListener('DOMContentLoaded', function () {
-                loadComponentsFromLocalStorage();
+<script src="{{ url_for('static', filename='js/localStorageDao.js') }}"></script>
+<script src="{{ url_for('static', filename='js/componentController.js') }}"></script>
+<script src="{{ url_for('static', filename='js/metadataController.js') }}"></script>
 
-                const nav = document.getElementById('bottomNav');
-                const form = document.getElementById('metadataForm');
-                const observer = new MutationObserver(function () {
-                    if (form.classList.contains('d-none')) {
-                        nav.classList.add('fixed-bottom');
-                    } else {
-                        nav.classList.remove('fixed-bottom');
-                    }
-                });
-                observer.observe(form, { attributes: true, attributeFilter: ['class'] });
-            });
-        </script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        loadComponentsFromLocalStorage();
 
-        {% endblock %}
+        const nav = document.getElementById('bottomNav');
+        const form = document.getElementById('metadataForm');
+        const observer = new MutationObserver(function () {
+            if (form.classList.contains('d-none')) {
+                nav.classList.add('fixed-bottom');
+            } else {
+                nav.classList.remove('fixed-bottom');
+            }
+        });
+        observer.observe(form, { attributes: true, attributeFilter: ['class'] });
+    });
+</script>
+
+{% endblock %}

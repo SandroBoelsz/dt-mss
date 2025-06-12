@@ -194,28 +194,34 @@ function setEditModularity(modularity) {
   document.getElementById("modularityInput").value = modularity;
 }
 
+// Get the current viewpoint from the global configuration
 function getViewpointFromConfig() {
   return window.APP_CONFIG.viewpoint;
 }
 
+// Get components from localStorage for a specific viewpoint
 function getComponentsForViewpoint(viewpoint) {
   return get_components_from_local_storage(viewpoint) || [];
 }
 
+// Set the type of a component (code or non-code)
 function setComponentType(component, isNonCode) {
   component.isNonCodeComponent = isNonCode;
   return component;
 }
 
+// Set the modularity of a component
 function setComponentModularity(component, modularity) {
   component.modularity = modularity;
   return component;
 }
 
+// Update a component in localStorage at a specific index
 function updateComponentInStorage(viewpoint, component, index) {
   save_component_at_index_to_local_storage(viewpoint, component, index);
 }
 
+// Map modularity values to readable names for display
 function map_modularity_to_readable_name(modularity) {
   const modularityMap = {
     monolithic: "Monolithic Container",
@@ -228,6 +234,7 @@ function map_modularity_to_readable_name(modularity) {
   return modularityMap[modularity] || modularity;
 }
 
+// Render a single component row in the table based on the viewpoint
 function renderComponentRow(component, index, viewpoint) {
   let rowHtml = `
                 <td>${component.name}</td>
@@ -378,8 +385,16 @@ function handleComponentEditing(event, index) {
   loadComponentsFromLocalStorage();
 }
 
+// Check if all components in the current viewpoint have modularity defined
 function all_components_have_modularity() {
   const viewpoint = window.APP_CONFIG.viewpoint;
   const components = get_components_from_local_storage(viewpoint) || [];
   return components.every((c) => c.modularity);
+}
+
+// Check if all components have been enriched with metadata
+function all_components_have_metadata() {
+  const viewpoint = window.APP_CONFIG.viewpoint;
+  const components = get_components_from_local_storage(viewpoint) || [];
+  return components.length <= 0
 }
